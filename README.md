@@ -52,7 +52,7 @@ print(result)
 |amount|Integer|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
 #
-`get_balance` - делает перевод другому пользователю
+`get_balance` - возвращает баланс вашего аккаунта
 ```python
 result = merchant.get_balance()
 print(result)
