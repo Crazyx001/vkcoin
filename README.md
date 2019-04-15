@@ -65,7 +65,7 @@ print(result)
 # Callback
 Описание параметров, которые будут переданы в callback функции.
 
-[`on_payment`](https://vk.com/@hs-marchant-api?anchor=ssylka-na-oplatu) - вызывается при получении перевода от других пользователей
+`on_payment` - вызывается при получении перевода от других пользователей
 ```python
 def on_payment_recieved(user_id, amount):
     print(user_id, amount)
