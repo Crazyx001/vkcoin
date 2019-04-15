@@ -1,12 +1,10 @@
 # vkcoin
 Враппер для платёжного API VK Coin. https://vk.com/@hs-marchant-api
 # Установка
-На данный момент установка через репозиторий pip недоступна, используйте установку через git
 * Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше
-* Если вы используете Windows, установите [git](https://git-scm.com/download/win)
 * Введите следующую команду в командную строку:
 ```bash
-pip install git+git://github.com/crinny/vkcoin.git
+pip install vkcoin
 ```
 * Вы прекрасны!
 # Начало работы
