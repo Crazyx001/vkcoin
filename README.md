@@ -85,8 +85,9 @@ def on_payment_recieved(user_id, amount):
 merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
 ```
 # Благодарности
-[https://vk.com/edgar_gorobchuk](Эдгар Горобчук) - за написание [SpootiFM/vkcoin](https://github.com/SpootiFM/vkcoin)
-[https://vk.com/dgs00](Eвгений Чертков) - за PEP
+[Эдгар Горобчук](https://vk.com/edgar_gorobchuk) - за написание [SpootiFM/vkcoin](https://github.com/SpootiFM/vkcoin)
+
+[Eвгений Чертков](https://vk.com/dgs00) - за PEP
 # Где меня можно найти
 Могу ответить на ваши вопросы
 * [ВКонтакте](https://vk.com/crinny)
