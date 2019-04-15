@@ -3,7 +3,6 @@ import vk
 import threading
 import requests
 import random
-import json
 import time
 
 
@@ -46,12 +45,11 @@ class Merchant:
     def get_transactions(self, tx, last_tx=None):
         if last_tx is None:
             transactions = requests.post(self.url + 'tx/',
-                                         data=json.dumps({'merchantId': self.id, 'key': self.key, 'tx': tx}),
+                                         json={'merchantId': self.id, 'key': self.key, 'tx': tx},
                                          headers={"Content-Type": "application/json"})
         else:
             transactions = requests.post(self.url + 'tx/',
-                                         data=json.dumps({'merchantId': self.id, 'key': self.key, 'tx': tx,
-                                                          'lastTx': last_tx}),
+                                         json={'merchantId': self.id, 'key': self.key, 'tx': tx, 'lastTx': last_tx},
                                          headers={"Content-Type": "application/json"})
         return transactions.json()
 
@@ -59,14 +57,14 @@ class Merchant:
         if not self.is_send_request_running:
             self.is_send_request_running = True
             transactions = requests.post(self.url + 'send/',
-                                         data=json.dumps({'merchantId': self.id, 'key': self.key, 'toId': to_id,
-                                                          'amount': amount * 1000}),
+                                         json={'merchantId': self.id, 'key': self.key, 'toId': to_id,
+                                               'amount': amount * 1000},
                                          headers={"Content-Type": "application/json"})
             self.is_send_request_running = False
             return transactions.json()
 
     def get_balance(self, user_ids):
         balance = requests.post(self.url + 'score/',
-                                data=json.dumps({'merchantId': self.id, 'key': self.key, 'userIds': user_ids}),
+                                json={'merchantId': self.id, 'key': self.key, 'userIds': user_ids},
                                 headers={"Content-Type": "application/json"})
         return balance.json()
