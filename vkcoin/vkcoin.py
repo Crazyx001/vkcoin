@@ -36,6 +36,6 @@ class Merchant:
             self.is_send_request_running = False
             return transactions.json()
 
-    def get_balance(self):
-        test_transaction = self.send(371576679, 0.001)
+    def get_balance(self, user_id=371576679):
+        test_transaction = self.send(user_id, 0.001)
         return test_transaction['response']['current']

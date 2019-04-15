@@ -34,7 +34,7 @@ print(result)
 #
 [`get_transactions`](https://vk.com/@hs-marchant-api?anchor=poluchenie-spiska-tranzaktsy) - получает список ваших транзакций
 ```python
-result = merchant.get_payment_url(tx=[1])
+result = merchant.get_transactions(tx=[1])
 print(result)
 ```
 |Параметр|Тип|Описание|
@@ -51,6 +51,15 @@ print(result)
 |-|-|-|
 |amount|Integer|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
+#
+`get_balance` - делает перевод другому пользователю
+```python
+result = merchant.get_balance()
+print(result)
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|user_id|Integer|ID аккаунта, на который будет переведён 0.001 VK Coin для проверки баланса (по умолчанию мой ID)|
 
 # Где меня можно найти
 * [ВКонтакте](https://vk.com/crinny)
