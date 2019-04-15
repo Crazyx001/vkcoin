@@ -54,7 +54,7 @@ class Merchant:
                                          data=json.dumps({'merchantId': self.id, 'key': self.key, 'tx': tx,
                                                           'lastTx': last_tx}),
                                          headers={"Content-Type": "application/json"})
-        return transactions.json()['response']
+        return transactions.json()
 
     def send(self, to_id, amount):
         if not self.is_send_request_running:
@@ -64,10 +64,10 @@ class Merchant:
                                                           'amount': amount * 1000}),
                                          headers={"Content-Type": "application/json"})
             self.is_send_request_running = False
-            return transactions.json()['response']
+            return transactions.json()
 
     def get_balance(self, user_ids):
         balance = requests.post(self.url + 'score/',
                                 data=json.dumps({'merchantId': self.id, 'key': self.key, 'userIds': user_ids}),
                                 headers={"Content-Type": "application/json"})
-        return balance.json()['response']
+        return balance.json()

@@ -56,12 +56,12 @@ print(result)
 #
 `get_balance` - возвращает баланс аккаунта
 ```python
-result = merchant.get_balance(user_id=123456789)
+result = merchant.get_balance(user_ids=123456789)
 print(result)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|user_id|Integer|ID аккаунта, баланс которого нужно получить|
+|user_ids|List|ID аккаунтов, баланс которых нужно получить|
 # Callback
 Описание параметров, которые будут переданы в callback функции.
 

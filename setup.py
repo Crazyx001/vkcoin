@@ -5,7 +5,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setuptools.setup(
     name='vkcoin',
-    version='1.5.4',
+    version='1.5.5',
     author="crinny",
     author_email="isfellop@gmail.com",
     description="Враппер для платёжного API VK Coin",
