@@ -66,6 +66,8 @@ class Merchant:
             self.is_send_request_running = False
             return transactions.json()
 
-    def get_balance(self, user_id=371576679):
-        test_transaction = self.send(user_id, 0.001)
-        return float(test_transaction['response']['current']) / 1000
+    def get_balance(self, user_ids):
+        balance = requests.post(self.url + 'score/',
+                                data=json.dumps({'merchantId': self.id, 'key': self.key, 'userIds': user_ids}),
+                                headers={"Content-Type": "application/json"})
+        return balance.json()
