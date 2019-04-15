@@ -54,14 +54,14 @@ print(result)
 |amount|Float|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
 #
-`get_balance` - возвращает баланс вашего аккаунта
+`get_balance` - возвращает баланс аккаунта
 ```python
-result = merchant.get_balance()
+result = merchant.get_balance(user_id=123456789)
 print(result)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|user_id|Integer|ID аккаунта, на который будет переведён 0.001 VK Coin для проверки баланса (по умолчанию мой ID)|
+|user_id|Integer|ID аккаунта, баланс которого нужно получить|
 # Callback
 Описание параметров, которые будут переданы в callback функции.
 
