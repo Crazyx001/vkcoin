@@ -51,7 +51,8 @@ class Merchant:
                                          headers={"Content-Type": "application/json"})
         else:
             transactions = requests.post(self.url + 'tx/',
-                                         data=json.dumps({'merchantId': self.id, 'key': self.key, 'tx': tx, 'lastTx': last_tx}),
+                                         data=json.dumps({'merchantId': self.id, 'key': self.key, 'tx': tx,
+                                                          'lastTx': last_tx}),
                                          headers={"Content-Type": "application/json"})
         return transactions.json()
 
@@ -60,7 +61,8 @@ class Merchant:
             self.is_send_request_running = True
             transactions = requests.post(self.url + 'send/',
                                          data=json.dumps({'merchantId': self.id, 'key': self.key, 'toId': to_id,
-                                               'amount': amount * 1000}), headers={"Content-Type": "application/json"})
+                                                          'amount': amount * 1000}),
+                                         headers={"Content-Type": "application/json"})
             self.is_send_request_running = False
             return transactions.json()
 
