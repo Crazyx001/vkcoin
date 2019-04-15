@@ -52,9 +52,9 @@ class Merchant:
 
     def get_payment_url(self, amount, payload=random.randint(-2000000000, 2000000000), free_amount=False):
         if free_amount:
-            return 'vk.com/coin#m{id}_{sum}_{payload}_1'.format(id=self.id, sum=amount * 1000, payload=payload)
+            return 'vk.com/coin#x{id}_{sum}_{payload}_1'.format(id=self.id, sum=amount * 1000, payload=payload)
         else:
-            return 'vk.com/coin#m{id}_{sum}_{payload}'.format(id=self.id, sum=amount * 1000, payload=payload)
+            return 'vk.com/coin#x{id}_{sum}_{payload}'.format(id=self.id, sum=amount * 1000, payload=payload)
 
     def get_transactions(self, tx, last_tx=None):
         if last_tx is None:
