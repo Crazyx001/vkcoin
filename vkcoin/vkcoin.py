@@ -7,6 +7,7 @@ class Merchant:
         self.key = key
         self.id = int(user_id)
         self.url = 'https://coin-without-bugs.vkforms.ru/merchant/'
+        self.is_send_request_running = False  # Защита от получения ANOTHER_TRANSACTION_IN_PROGRESS_AT_SAME_TIME
 
     def get_payment_url(self, amount, payload=random.randint(-2000000000, 2000000000), free_amount=False):
         if free_amount:
@@ -24,7 +25,10 @@ class Merchant:
         return transactions.json()
 
     def send(self, amount, to_id):
-        transactions = requests.post(self.url + 'send/',
-                                     data={'merchantId': self.id, 'key': self.key, 'toId': to_id,
-                                           'amount': amount * 1000})
-        return transactions.json()
+        if not self.is_send_request_running:
+            self.is_send_request_running = True
+            transactions = requests.post(self.url + 'send/',
+                                         data={'merchantId': self.id, 'key': self.key, 'toId': to_id,
+                                               'amount': amount * 1000})
+            self.is_send_request_running = False
+            return transactions.json()

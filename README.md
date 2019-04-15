@@ -29,7 +29,7 @@ print(result)
 |Параметр|Тип|Описание|
 |-|-|-|
 |amount|Integer|Количество VK Coin для перевода|
-|_payload_|Integer|Число от -2ккк до 2ккк, вернется в списке транзаций|
+|_payload_|Integer|Число от -2000000000 до 2000000000, вернется в списке транзаций|
 |_free_amount_|Boolean|True, что бы позволить пользователю изменять сумму перевода|
 #
 [`get_transactions`](https://vk.com/@hs-marchant-api?anchor=poluchenie-spiska-tranzaktsy) - получает список ваших транзакций
