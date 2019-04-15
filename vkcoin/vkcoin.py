@@ -21,10 +21,9 @@ class Merchant:
             self.app_url = self.api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
 
             channel = self.id % 32
-            ws_link = self.app_url.replace('https', 'wss').replace('\\', '')
-            ws_link = ws_link.replace('index.html', 'channel/{channel}'.format(channel=channel))
-            ws_link += '&ver=1&upd=1&pass={user_id}'.format(user_id=self.id - 1)
-            self.wss_url = ws_link
+            self.wss_url = self.app_url.replace('https', 'wss').replace('\\', '')
+            self.wss_url = self.wss_url.replace('index.html', 'channel/{channel}'.format(channel=channel))
+            self.wss_url += '&ver=1&upd=1&pass={user_id}'.format(user_id=self.id - 1)
             self.on_payment = on_payment
 
             self.ws = create_connection(self.wss_url)

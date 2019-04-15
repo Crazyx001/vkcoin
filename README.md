@@ -18,7 +18,7 @@ merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 |-|-|-|
 |user_id|Integer|ID аккаунта ВКонтакте|
 |key|String|Ключ для взаимодействия с API|
-|_token_|String|Токен VK API, полученный по инструкции (необходим только для _on_payment_)|
+|_token_|String|Токен VK API, полученный по [инструкции](https://github.com/crinny/vkcoin#получение-токена) (необходим только для _on_payment_)|
 |_on_payment_|Function|Callback функция, которая будет вызвана при получении перевода от других пользователей|
 # Методы
 Необязательные параметры при вызове функций выделены _курсивом_.
@@ -84,6 +84,8 @@ def on_payment_recieved(user_id, amount):
 
 merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
 ```
+# Получение токена
+Перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после access_token= и до &expires_in (85 символов)
 # Благодарности
 [Эдгар Горобчук](https://vk.com/edgar_gorobchuk) - за написание [SpootiFM/vkcoin](https://github.com/SpootiFM/vkcoin)
 
