@@ -10,26 +10,18 @@ except ImportError:
 
 
 class Merchant:
-    def __init__(self, user_id, key, token=None, on_payment=None):
+    def __init__(self, user_id, key):
         self.key = key
         self.id = int(user_id)
         self.url = 'https://coin-without-bugs.vkforms.ru/merchant/'
         self.is_send_request_running = False  # Защита от получения ANOTHER_TRANSACTION_IN_PROGRESS_AT_SAME_TIME
-        if on_payment is not None and token is not None:
-            self.token = token
-            self.on_payment = on_payment
-            self.session = vk.Session(access_token=self.token)
-            self.api = vk.API(self.session, v='5.92')
-            self.app_url = self.api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
-
-            channel = self.id % 32
-            self.wss_url = self.app_url.replace('https', 'wss').replace('\\', '')
-            self.wss_url = self.wss_url.replace('index.html', 'channel/{channel}'.format(channel=channel))
-            self.wss_url += '&ver=1&upd=1&pass={user_id}'.format(user_id=self.id - 1)
-            self.on_payment = on_payment
-
-            self.ws = create_connection(self.wss_url)
-            threading.Thread(target=self.long_poll).start()
+        self.token = None
+        self.session = None
+        self.api = None
+        self.app_url = None
+        self.wss_url = None
+        self.on_payment = None
+        self.ws = None
 
     def long_poll(self):
         try:
@@ -42,6 +34,21 @@ class Merchant:
         except WebSocketConnectionClosedException:
             self.ws = create_connection(self.wss_url)
             threading.Thread(target=self.long_poll).start()
+
+    def register_payment_callback(self, token, callback):
+        self.on_payment = callback
+        self.token = token
+        self.session = vk.Session(access_token=self.token)
+        self.api = vk.API(self.session, v='5.92')
+        self.app_url = self.api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
+
+        channel = self.id % 32
+        self.wss_url = self.app_url.replace('https', 'wss').replace('\\', '')
+        self.wss_url = self.wss_url.replace('index.html', 'channel/{channel}'.format(channel=channel))
+        self.wss_url += '&ver=1&upd=1&pass={user_id}'.format(user_id=self.id - 1)
+
+        self.ws = create_connection(self.wss_url)
+        threading.Thread(target=self.long_poll).start()
 
     def get_payment_url(self, amount, payload=random.randint(-2000000000, 2000000000), free_amount=False):
         if free_amount:
@@ -66,6 +73,6 @@ class Merchant:
             self.is_send_request_running = False
             return transactions.json()
 
-    def get_balance(self, user_ids):
-        balance = requests.post(self.url + 'score/', json={'merchantId': self.id, 'key': self.key, 'userIds': user_ids})
+    def get_balance(self, *args):
+        balance = requests.post(self.url + 'score/', json={'merchantId': self.id, 'key': self.key, 'userIds': args})
         return balance.json()

@@ -86,7 +86,7 @@ import vkcoin
 def on_payment_recieved(user_id, amount):
     print(user_id, amount)
 
-merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
+merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', token='xxxxxx', on_payment=on_payment_recieved)
 ```
 # Получение токена
 Перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после access_token= и до &expires_in (85 символов)
