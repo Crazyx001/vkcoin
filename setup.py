@@ -5,7 +5,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setuptools.setup(
     name='vkcoin',
-    version='1.4.2',
+    version='1.5',
     author="crinny",
     author_email="isfellop@gmail.com",
     description="Враппер для платёжного API VK Coin",
@@ -13,6 +13,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/crinny/vkcoin",
     packages=['vkcoin'],
-    install_requires=['requests'],
+    install_requires=['requests', 'websocket_client', 'vk'],
     classifiers=['Programming Language :: Python :: 3.6'],
 )

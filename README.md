@@ -18,6 +18,8 @@ merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 |-|-|-|
 |user_id|Integer|ID аккаунта ВКонтакте|
 |key|String|Ключ для взаимодействия с API|
+|_token_|String|Токен VK API, полученный по инструкции (необходим только для _on_payment_)|
+|_on_payment_|Function|Callback функция, которая будет вызвана при получении перевода от других пользователей|
 # Методы
 Необязательные параметры при вызове функций выделены _курсивом_.
 
@@ -28,7 +30,7 @@ print(result)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|amount|Integer|Количество VK Coin для перевода|
+|amount|Float|Количество VK Coin для перевода|
 |_payload_|Integer|Число от -2000000000 до 2000000000, вернется в списке транзаций|
 |_free_amount_|Boolean|True, что бы позволить пользователю изменять сумму перевода|
 #
@@ -49,7 +51,7 @@ print(result)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|amount|Integer|Сумма перевода|
+|amount|Float|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
 #
 `get_balance` - возвращает баланс вашего аккаунта
@@ -60,7 +62,19 @@ print(result)
 |Параметр|Тип|Описание|
 |-|-|-|
 |user_id|Integer|ID аккаунта, на который будет переведён 0.001 VK Coin для проверки баланса (по умолчанию мой ID)|
+# Callback
+Описание параметров, которые будут переданы в callback функции.
 
+[`on_payment`](https://vk.com/@hs-marchant-api?anchor=ssylka-na-oplatu) - вызывается при получении перевода от других пользователей
+```python
+def on_payment_recieved(user_id, amount):
+    print(user_id, amount)
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|user_id|Integer|ID аккаунта, с которого был совершён перевод|
+|amount|Float|Сумма перевода|
+#
 # Где меня можно найти
 * [ВКонтакте](https://vk.com/crinny)
 * [Telegram](https://t.me/truecrinny)

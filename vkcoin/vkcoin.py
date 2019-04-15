@@ -1,14 +1,42 @@
+from websocket import create_connection
+import vk
+import threading
 import requests
 import random
 import json
+import time
 
 
 class Merchant:
-    def __init__(self, user_id, key):
+    def __init__(self, user_id, key, token=None, on_payment=None):
         self.key = key
         self.id = int(user_id)
         self.url = 'https://coin-without-bugs.vkforms.ru/merchant/'
         self.is_send_request_running = False  # Защита от получения ANOTHER_TRANSACTION_IN_PROGRESS_AT_SAME_TIME
+        if on_payment is not None and token is not None:
+            self.token = token
+            self.on_payment = on_payment
+            self.session = vk.Session(access_token=self.token)
+            self.api = vk.API(self.session, v='5.92')
+            self.app_url = self.api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
+
+            channel = self.id % 32
+            ws_link = self.app_url.replace('https', 'wss').replace('\\', '')
+            ws_link = ws_link.replace('index.html', 'channel/{channel}'.format(channel=channel))
+            ws_link += '&ver=1&upd=1&pass={user_id}'.format(user_id=self.id - 1)
+            self.wss_url = ws_link
+            self.on_payment = on_payment
+
+            self.ws = create_connection(self.wss_url)
+            threading.Thread(target=self.long_poll).start()
+
+    def long_poll(self):
+        while True:
+            time.sleep(0.2)
+            message = self.ws.recv()
+            if message.startswith('TR'):
+                message = message.split()
+                self.on_payment(int(message[2]), float(message[1]) / 1000)
 
     def get_payment_url(self, amount, payload=random.randint(-2000000000, 2000000000), free_amount=False):
         if free_amount:
