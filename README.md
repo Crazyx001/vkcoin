@@ -74,7 +74,16 @@ def on_payment_recieved(user_id, amount):
 |-|-|-|
 |user_id|Integer|ID аккаунта, с которого был совершён перевод|
 |amount|Float|Сумма перевода|
-#
+# Примеры
+### Callback
+```python
+import vkcoin
+
+def on_payment_recieved(user_id, amount):
+    print(user_id, amount)
+
+merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
+```
 # Где меня можно найти
 * [ВКонтакте](https://vk.com/crinny)
 * [Telegram](https://t.me/truecrinny)
