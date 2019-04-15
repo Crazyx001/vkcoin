@@ -12,7 +12,7 @@ pip install vkcoin
 ```python
 import vkcoin
 
-merchant = vkcoin.Merchant()
+merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
