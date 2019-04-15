@@ -1,9 +1,12 @@
-from websocket import create_connection
-import vk
 import threading
 import requests
 import random
 import time
+try:
+    from websocket import create_connection, WebSocketConnectionClosedException
+    import vk
+except ImportError:
+    pass
 
 
 class Merchant:
@@ -29,12 +32,16 @@ class Merchant:
             threading.Thread(target=self.long_poll).start()
 
     def long_poll(self):
-        while True:
-            time.sleep(0.2)
-            message = self.ws.recv()
-            if message.startswith('TR'):
-                message = message.split()
-                self.on_payment(int(message[2]), float(message[1]) / 1000)
+        try:
+            while True:
+                time.sleep(0.2)
+                message = self.ws.recv()
+                if message.startswith('TR'):
+                    message = message.split()
+                    self.on_payment(int(message[2]), float(message[1]) / 1000)
+        except WebSocketConnectionClosedException:
+            self.ws = create_connection(self.wss_url)
+            threading.Thread(target=self.long_poll).start()
 
     def get_payment_url(self, amount, payload=random.randint(-2000000000, 2000000000), free_amount=False):
         if free_amount:
@@ -44,13 +51,10 @@ class Merchant:
 
     def get_transactions(self, tx, last_tx=None):
         if last_tx is None:
-            transactions = requests.post(self.url + 'tx/',
-                                         json={'merchantId': self.id, 'key': self.key, 'tx': tx},
-                                         headers={"Content-Type": "application/json"})
+            transactions = requests.post(self.url + 'tx/', json={'merchantId': self.id, 'key': self.key, 'tx': tx})
         else:
             transactions = requests.post(self.url + 'tx/',
-                                         json={'merchantId': self.id, 'key': self.key, 'tx': tx, 'lastTx': last_tx},
-                                         headers={"Content-Type": "application/json"})
+                                         json={'merchantId': self.id, 'key': self.key, 'tx': tx, 'lastTx': last_tx})
         return transactions.json()
 
     def send(self, to_id, amount):
@@ -58,13 +62,10 @@ class Merchant:
             self.is_send_request_running = True
             transactions = requests.post(self.url + 'send/',
                                          json={'merchantId': self.id, 'key': self.key, 'toId': to_id,
-                                               'amount': amount * 1000},
-                                         headers={"Content-Type": "application/json"})
+                                               'amount': amount * 1000})
             self.is_send_request_running = False
             return transactions.json()
 
     def get_balance(self, user_ids):
-        balance = requests.post(self.url + 'score/',
-                                json={'merchantId': self.id, 'key': self.key, 'userIds': user_ids},
-                                headers={"Content-Type": "application/json"})
+        balance = requests.post(self.url + 'score/', json={'merchantId': self.id, 'key': self.key, 'userIds': user_ids})
         return balance.json()

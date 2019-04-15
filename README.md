@@ -6,6 +6,10 @@
 ```bash
 pip install vkcoin
 ```
+* Или, вы можете собрать библиотеку с GitHub:
+```bash
+pip install git+git://github.com/crinny/vkcoin.git
+```
 * Вы прекрасны!
 # Начало работы
 Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением **.py**, например **test.py**. Вы не можете назвать файл vkcoin.py, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
@@ -54,7 +58,7 @@ print(result)
 |amount|Float|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
 #
-`get_balance` - возвращает баланс аккаунта
+[`get_balance`](https://vk.com/@hs-marchant-api?anchor=poluchenie-balansa) - возвращает баланс аккаунта
 ```python
 result = merchant.get_balance(user_ids=[123456789])
 print(result)
@@ -86,12 +90,9 @@ merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 # Получение токена
 Перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после access_token= и до &expires_in (85 символов)
-# Благодарности
-[Эдгар Горобчук](https://vk.com/edgar_gorobchuk) - за написание [SpootiFM/vkcoin](https://github.com/SpootiFM/vkcoin)
 
-[Eвгений Чертков](https://vk.com/dgs00) - за PEP
 # Где меня можно найти
 Могу ответить на ваши вопросы
 * [ВКонтакте](https://vk.com/crinny)
 * [Telegram](https://t.me/truecrinny)
-* [Чат ВКонтакте по VK Coin API (не мой)](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
+* [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
