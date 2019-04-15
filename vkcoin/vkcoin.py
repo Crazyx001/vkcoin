@@ -38,4 +38,4 @@ class Merchant:
 
     def get_balance(self, user_id=371576679):
         test_transaction = self.send(user_id, 0.001)
-        return test_transaction['response']['current']
+        return float(test_transaction['response']['current']) / 1000
