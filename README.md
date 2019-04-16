@@ -22,8 +22,6 @@ merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 |-|-|-|
 |user_id|Integer|ID аккаунта ВКонтакте|
 |key|String|Ключ для взаимодействия с API|
-|_token_|String|Токен VK API, полученный по [инструкции](https://github.com/crinny/vkcoin#получение-токена) (необходим только для _on_payment_)|
-|_on_payment_|Function|Callback функция, которая будет вызвана при получении перевода от других пользователей|
 # Методы
 Необязательные параметры при вызове функций выделены _курсивом_.
 
@@ -67,9 +65,9 @@ print(result)
 |-|-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
-`register_payment_callback` - возвращает баланс аккаунта
+`register_payment_callback` - регистрирует callback ункцию, которая будет вызвана прим получении перевода
 ```python
-merchant.register_payment_callback()
+merchant.register_payment_callback(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
@@ -96,7 +94,7 @@ def on_payment_recieved(user_id, amount):
     print(user_id, amount)
 
 merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-merchant.register_payment_callback(token='xxxxxx', callback=on_payment_recieved)
+merchant.register_payment_callback(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', callback=on_payment_recieved)
 
 ```
 # Получение токена
