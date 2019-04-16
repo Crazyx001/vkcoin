@@ -71,7 +71,7 @@ merchant.register_payment_callback(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_pay
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|token|String|Токен VK API, полученный по [инструкции](https://github.com/crinny/vkcoin#получение-токена) (необходим только для _on_payment_)|
+|token|String|Токен VK API, полученный по [инструкции](https://github.com/crinny/vkcoin#получение-токена)|
 |on_payment|Function|Callback функция, которая будет вызвана при получении перевода от других пользователей|
 # Callback
 Описание параметров, которые будут переданы в callback функции.
