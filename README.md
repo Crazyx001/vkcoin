@@ -60,12 +60,21 @@ print(result)
 #
 [`get_balance`](https://vk.com/@hs-marchant-api?anchor=poluchenie-balansa) - возвращает баланс аккаунта
 ```python
-result = merchant.get_balance(user_ids=[123456789])
+result = merchant.get_balance(123456789, 987654321)
 print(result)
+```
+Тип|Описание|
+|-|-|-|
+Integer|ID аккаунтов, баланс которых нужно получить|
+#
+`register_payment_callback` - возвращает баланс аккаунта
+```python
+merchant.register_payment_callback()
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|user_ids|List|ID аккаунтов, баланс которых нужно получить|
+|token|String|Токен VK API, полученный по [инструкции](https://github.com/crinny/vkcoin#получение-токена) (необходим только для _on_payment_)|
+|on_payment|Function|Callback функция, которая будет вызвана при получении перевода от других пользователей|
 # Callback
 Описание параметров, которые будут переданы в callback функции.
 
