@@ -61,7 +61,7 @@ print(result)
 result = merchant.get_balance(123456789, 987654321)
 print(result)
 ```
-Тип|Описание|
+|Тип|Описание|
 |-|-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
