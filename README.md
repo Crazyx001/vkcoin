@@ -65,7 +65,7 @@ print(result)
 |-|-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
-`register_payment_callback` - регистрирует callback ункцию, которая будет вызвана прим получении перевода
+`register_payment_callback` - регистрирует callback функцию, которая будет вызвана прим получении перевода
 ```python
 merchant.register_payment_callback(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
 ```
