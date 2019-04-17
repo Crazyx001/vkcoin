@@ -1,5 +1,6 @@
 # vkcoin  
-Враппер для платёжного API VK Coin. https://vk.com/@hs-marchant-api  
+Враппер для платёжного API VK Coin. https://vk.com/@hs-marchant-api
+Авторы: [crinny](https://github.com/crinny), [SpootiFM](https://github.com/SpootiFM)
 # Установка  
 * Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше  
 * Введите следующую команду в командную строку:  
@@ -133,3 +134,6 @@ def with_transfer(data):
 * [ВКонтакте](https://vk.com/crinny)  
 * [Telegram](https://t.me/truecrinny)  
 * [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
+
+# Второй разработчик
+* [ВКонтакте](https://vk.com/edgar_gorobchuk)
