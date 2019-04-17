@@ -1,1 +1,1 @@
-from .vkcoin import *
+from vkcoin import *
