@@ -99,7 +99,8 @@ callback = vkcoin.VKCoinWS(token, iframe_link)
 ```python  
 @callback.handler  
 def your_func(data):  
- do_something...```  
+ do_something...
+```  
 При получении обратного вызова - входящей транзакции - в зарегестрированную функцию возвращается объект класса `Entity`, который является абстракцией входящего перевода и содержит следующие параметры:  
 ```python  
 data.user_id - # ваш ID  
