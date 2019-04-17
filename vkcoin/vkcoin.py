@@ -3,7 +3,7 @@ import time
 from threading import Thread
 from random import randint
 import json
-
+import vkcoin
 try:
 	from websocket import create_connection
 	from websocket import WebSocketConnectionClosedException as WebSocketClosed
@@ -88,7 +88,7 @@ class VKCoinApi:
 	link = 'https://coin-without-bugs.vkforms.ru/merchant/'
 	
 	def __init__(self, user_id, key):
-		self.user = user
+		self.user = user_id
 		self.key = key
 	
 	def send_coins(self, to_id, amount):
