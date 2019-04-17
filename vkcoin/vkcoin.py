@@ -91,13 +91,13 @@ class VKCoinApi:
 		self.key = key
 
 	def send_coins(self, to_id, amount):
-		data = {'merchantId': self.user, 'key': self.key, 'toId': to_id, 'amount': amount}
+		data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
 		return requests.post(link + 'send', json=data).json()
 
 	def get_payment_url(self, amount, payload=None, free_amount=False):
 		if not payload:
 			payload = randint(-2e9, 2e9)
-		user_id = hex(self.merchant_id)[2:]
+		user_id = hex(self.user_id)[2:]
 		amount = hex(amount)[2:]
 		payload = hex(payload)[2:]
 		link = f'vk.com/coin#m{user_id}_{amount}_{payload}'
@@ -106,13 +106,13 @@ class VKCoinApi:
 		return link
 
 	def get_transactions(self, tx=[2]):
-		data = {'merchantId': self.user, 'key': self.key, 'tx': tx}
+		data = {'merchantId': self.user_id, 'key': self.key, 'tx': tx}
 		return requests.post(link + 'th', json=data).json()
 
 	def get_user_balance(self, *users):
-		data = {'merchantId': self.user, 'key': self.key, 'userIds': users}
+		data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
 		return requests.post(link + 'score', json=data).json()
 
 	def get_my_balance(self):
-		data = {'merchantId': self.user, 'key': self.key, 'userIds': [self.user]}
+		data = {'merchantId': self.user_id, 'key': self.key, 'userIds': [self.user]}
 		return requests.post(link + 'score', json=data).json()
