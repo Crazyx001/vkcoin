@@ -55,7 +55,7 @@ print(result)
 #
 [`send coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
 ```python
-result = merchant.send(amount, to_id)  
+result = merchant.send_coins(amount, to_id)  
 print(result)
 ```
 |Параметр|Тип|Описание|
