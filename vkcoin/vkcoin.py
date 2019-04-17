@@ -85,7 +85,7 @@ class VKCoinWS(Thread):
 class VKCoinApi:
     def __init__(self, user_id, key):
         self.link = 'https://coin-without-bugs.vkforms.ru/merchant/'
-        self.user = user_id
+        self.user_id = user_id
         self.key = key
 
 	def send_coins(self, to_id, amount):
