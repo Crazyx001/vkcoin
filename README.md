@@ -15,8 +15,14 @@ pip install git+git://github.com/crinny/vkcoin.git
 Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением **.py**, например **test.py**. Вы не можете назвать файл vkcoin.py, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
 ```python
 import vkcoin
+```
+Данная библиотека содержит в себе **2 класса**:
+- **VKCoinApi** - для работы с API VKCoin-а
+- **VKCoinWS** - для получения CallBack сообщения об зачислении коинов
 
-merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+# VKCoinApi
+```python
+merchant = vkcoin.VKCoinApi(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
@@ -38,17 +44,17 @@ print(result)
 #
 [`get_transactions`](https://vk.com/@hs-marchant-api?anchor=poluchenie-spiska-tranzaktsy) - получает список ваших транзакций
 ```python
-result = merchant.get_transactions(tx=[1])
+result = merchant.get_transactions(tx=[2])
 print(result)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
 |tx|List|Массив ID переводов для получения или [1] - последние 1000 транзакций, [2] - 100|
-|_last_tx_|Integer|Если указать номер последней транзакции то будут возвращены только транзакции после указанной|
+|_last_tx_|Integer|Если указать номер последней транзакции, то будут возвращены только транзакции после указанной|
 #
-[`send`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
+[`send coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
 ```python
-result = merchant.send(amount=100, to_id=371576679)  # Если запустить этот код, вы переведёте мне 100 VK Coin :)
+result = merchant.send(amount, to_id)  
 print(result)
 ```
 |Параметр|Тип|Описание|
@@ -56,49 +62,73 @@ print(result)
 |amount|Float|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
 #
-[`get_balance`](https://vk.com/@hs-marchant-api?anchor=poluchenie-balansa) - возвращает баланс аккаунта
+[`get_user_balance`](https://vk.com/@hs-marchant-api?anchor=poluchenie-balansa) - возвращает баланс аккаунта
 ```python
-result = merchant.get_balance(123456789, 987654321)
+result = merchant.get_user_balance(123456789, 987654321)
 print(result)
 ```
 |Тип|Описание|
 |-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
-`register_payment_callback` - регистрирует callback функцию, которая будет вызвана прим получении перевода
+`get_user_balance` - возвращает ваш баланс
 ```python
-merchant.register_payment_callback(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', on_payment=on_payment_recieved)
+result = merchant.get_my_balance()
+print(result)
 ```
-|Параметр|Тип|Описание|
-|-|-|-|
-|token|String|Токен VK API, полученный по [инструкции](https://github.com/crinny/vkcoin#получение-токена)|
-|on_payment|Function|Callback функция, которая будет вызвана при получении перевода от других пользователей|
-# Callback
-Описание параметров, которые будут переданы в callback функции.
 
-`on_payment` - вызывается при получении перевода от других пользователей
+# VKCoinWS _(CallBack)_
+**VKCoin** для взаимодействия между клиентом и сервером использует протокол WebSocket.
+Данный класс реализован для получения обратных вызовов при входящих транзакциях на аккаунт, доступ к которому может быть предоставлен одним из следующих параметров при создании объекта класса:
 ```python
-def on_payment_recieved(user_id, amount):
-    print(user_id, amount)
+callback = vkcoin.VKCoinWS(token, iframe_link)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
-|user_id|Integer|ID аккаунта, с которого был совершён перевод|
-|amount|Float|Сумма перевода|
+|token|String|acces_token вашего аккаунта **\***|
+|iframe_link|String|ссылка на iframe сервиса VKCoin **\*\***|
+
+**\*** получение токена - перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после `access_token=` и до `&expires_in` (85 символов)
+
+**\*\*** эту ссылку можно достать в коде страницы vk.com/coin
+1.  Переходим на [vk.com/coin](http://vk.com/coin)
+2.  Используем сочетание клавиш ```ctrl + U``` для просмотра исходного кода страницы
+3. Открываем поиск, вводим `sign=`
+4.  Копируем найденную ссылку, содержащую параметр `sign`
+
+После инициализации объекта необходимо зарегистрировать функцию, которая будет обрабатывать входящие платежи. Для этого используется декоратор `handler`
+```python
+@callback.handler
+def your_func(data):
+	do_something...
+```
+При получении обратного вызова - входящей транзакции - в зарегестрированную функцию возвращается объект класса `Entity`, который является абстракцией входящего перевода и содержит следующие параметры:
+```python
+data.user_id - # ваш ID
+data.balance - # баланс вашего аккаунта 
+data.user_from - # ID отправителя (инициатор входящей транзакции)
+data.amount - # количество полученных коинов
+```
+
+
 # Примеры
 ### Callback
 ```python
 import vkcoin
 
-def on_payment_recieved(user_id, amount):
-    print(user_id, amount)
+callback = vkcoin.VKCoinApi(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # либо ссылка на iframe
 
-merchant = vkcoin.Merchant(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-merchant.register_payment_callback(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', callback=on_payment_recieved)
+@callback.handler
+def with_transfer(data):
+    user_id = data.user_id
+	my_balance = data.balance
+	sender = data.user_from
+	amount = data.amount
+	
+callback.run_ws()  # запускаем веб-сокет - все входящие платежи 
+		# будут возвращаться в функцию with_transfer
 
 ```
-# Получение токена
-Перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после access_token= и до &expires_in (85 символов)
 
 # Где меня можно найти
 Могу ответить на ваши вопросы
