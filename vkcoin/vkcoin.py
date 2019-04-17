@@ -16,7 +16,7 @@ class Entity:
 
 
 class VKCoinWS(Thread):
-    def __init__(self, token=None, iframe_link=None, notify=False):
+	def __init__(self, token=None, iframe_link=None, notify=False):
         Thread.__init__(self)
         self.token = token
         self.iframe_link = iframe_link
