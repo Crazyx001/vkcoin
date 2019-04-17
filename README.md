@@ -52,9 +52,9 @@ print(result)
 |tx|List|Массив ID переводов для получения или [1] - последние 1000 транзакций, [2] - 100|
 |_last_tx_|Integer|Если указать номер последней транзакции, то будут возвращены только транзакции после указанной|
 #
-[`send coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
+[`send_coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
 ```python
-result = merchant.send(amount, to_id)  
+result = merchant.send_coins(amount, to_id)  
 print(result)
 ```
 |Параметр|Тип|Описание|
@@ -71,7 +71,7 @@ print(result)
 |-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
-`get_user_balance` - возвращает ваш баланс
+`get_my_balance` - возвращает ваш баланс
 ```python
 result = merchant.get_my_balance()
 print(result)
