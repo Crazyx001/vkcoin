@@ -62,14 +62,14 @@ print(result)
 |amount|Float|Сумма перевода|
 |to_id|Integer|ID аккаунта, на который будет совершён перевод|
 #
-[`get_user_balance`](https://vk.com/@hs-marchant-api?anchor=poluchenie-balansa) - возвращает баланс аккаунта
+[`get_user_balance`](https://vk.com/@hs-marchant-api?anchor=poluchenie-balansa) - возвращает баланс аккаунта(ов)
 ```python
 result = merchant.get_user_balance(123456789, 987654321)
 print(result)
 ```
 |Тип|Описание|
 |-|-|
-Integer|ID аккаунтов, баланс которых нужно получить|
+Integer|ID аккаунтов через запятую, баланс которых нужно получить|
 #
 `get_my_balance` - возвращает ваш баланс
 ```python
