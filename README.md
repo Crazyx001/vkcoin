@@ -88,7 +88,9 @@ callback = vkcoin.VKCoinWS(token, iframe_link)
 |-|-|-|
 |token|String|acces_token вашего аккаунта **\***|
 |iframe_link|String|ссылка на iframe сервиса VKCoin **\*\***|
+
 **\*** получение токена - перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после `access_token=` и до `&expires_in` (85 символов)
+
 **\*\*** эту ссылку можно достать в коде страницы vk.com/coin
 1.  Переходим на [vk.com/coin](http://vk.com/coin)
 2.  Используем сочетание клавиш ```ctrl + U``` для просмотра исходного кода страницы
@@ -120,9 +122,9 @@ callback = vkcoin.VKCoinApi(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # либо с
 @callback.handler
 def with_transfer(data):
     user_id = data.user_id
-	my_balance = data.balance
-	sender = data.user_from
-	amount = data.amount
+    my_balance = data.balance
+    sender = data.user_from
+    amount = data.amount
 	
 callback.run_ws()  # запускаем веб-сокет - все входящие платежи 
 				   # будут возвращаться в функцию with_transfer
@@ -131,6 +133,6 @@ callback.run_ws()  # запускаем веб-сокет - все входящ�
 
 # Где меня можно найти
 Могу ответить на ваши вопросы
-* [ВКонтакте](https://vk.com/crinny)
-* [Telegram](https://t.me/truecrinny)
+* [ВКонтакте Crinny](https://vk.com/crinny)   or  [ВКонтакте Spooti](https://vk.com/edgar_gorobchuk)
+* [Telegram Crinny](https://t.me/truecrinny)  or  [Telegram Spooti](https://t.me/spooti)
 * [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
