@@ -126,7 +126,8 @@ def with_transfer(data):
     sender = data.user_from
     amount = data.amount
 	
-callback.run_ws()  # запускаем веб-сокет - все входящие платежи будут возвращаться в функцию with_transfer
+callback.run_ws()  # запускаем веб-сокет - все входящие платежи 
+				   # будут возвращаться в функцию with_transfer
 
 ```
 
