@@ -3,6 +3,7 @@ import time
 from threading import Thread
 from random import randint
 import json
+
 try:
     from websocket import create_connection
     from websocket import WebSocketConnectionClosedException as WebSocketClosed
@@ -26,7 +27,7 @@ class VKCoinWS(Thread):
         self.count_ws_restarts = 0
         self.link = None
         self.ws_link = None
-        self.handler = None
+        self.handler_f = None
     
     def run_ws(self):
         if self.iframe_link:
@@ -34,10 +35,10 @@ class VKCoinWS(Thread):
         else:
             session = vk.Session(access_token=self.token)
             api = vk.API(session, v='5.92')
-            self.link = api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
+            self.iframe_link = api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
             self.ws_link = self._create_ws_link()
         self.start()
-    
+
     def _create_ws_link(self):
         user_id = int(self.iframe_link.split('user_id=')[-1].split('&')[0])
         ch = user_id % 32
@@ -72,8 +73,9 @@ class VKCoinWS(Thread):
                 print(f'Текущий баланс: {self.score/1000}')
             if self.handler:
                 data = Entity()
-                data.__dict__ = {'user_id': self.user_id, 'balance': self.score, 'user_from': user_from, 'amount': amount}
-                self.handler(data)
+                data.__dict__ = {'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
+                                 'amount': amount}
+                self.handler_f(data)
         elif len(msg) > 50000:
             msg = json.loads(msg)
             self.score = msg['score']
@@ -81,7 +83,7 @@ class VKCoinWS(Thread):
                 print('Баланс', msg['score'] / 1000)
 
     def handler(self, func):
-        self.handler = func
+        self.handler_f = func
         return func
 
 
