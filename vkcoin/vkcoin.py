@@ -111,7 +111,7 @@ class VKCoinApi:
 	
 	def get_transactions(self, tx):
 		data = {'merchantId': self.user_id, 'key': self.key, 'tx': tx}
-		return requests.post(self.link + 'th', json=data).json()
+		return requests.post(self.link + 'tx', json=data).json()
 	
 	def get_user_balance(self, *users):
 		data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
