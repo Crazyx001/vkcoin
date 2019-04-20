@@ -77,6 +77,16 @@ Integer|ID аккаунтов, баланс которых нужно получ
 result = merchant.get_my_balance()
 print(result)
 ```
+#
+[`set_shop_name`](https://vk.com/@hs-marchant-api?anchor=nazvanie-magazina) - возвращает баланс аккаунта
+
+Обратите внимание что название может быть закешированно на срок до 5 часов. Сбросить кеш никак нельзя.
+```python
+merchant.set_shop_name(name='Best Shop Ever')
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|name|String|Новое название магазина|
 
 # VKCoinWS _(CallBack)_
 **Рекомендуется использовать новый Сallback**

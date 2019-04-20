@@ -150,7 +150,11 @@ class VKCoinApi:
 					c_sock.close()
 				else:
 					self.handler(data)
-	
+
+	def set_shop_name(self, name):
+		data = {'merchantId': self.user_id, 'key': self.key, 'name': name}
+		return requests.post(self.link + 'set', json=data).json()
+
 	def cb_handler(self, func):
 		self.handler = func
 		return func
