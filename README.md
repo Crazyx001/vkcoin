@@ -88,6 +88,7 @@ merchant.set_shop_name(name='Best Shop Ever')
 
 # Callback
 Оффициальный Callback. Все приведённые ниже функции находятся в классе **VKCoinApi**
+
 [`set_callback_endpoint`](https://vk.com/@hs-marchant-api?anchor=callback-api)
 `set_callback_endpoint` - устанавливает Endpoint
 ```python
