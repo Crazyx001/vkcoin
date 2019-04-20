@@ -129,7 +129,7 @@ data.amount - # количество полученных коинов
 ```python
 import vkcoin
 
-callback = vkcoin.VKCoinApi(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # либо ссылка на iframe
+callback = vkcoin.VKCoinWS(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # либо ссылка на iframe
 
 @callback.handler
 def with_transfer(data):
@@ -139,7 +139,7 @@ def with_transfer(data):
     amount = data.amount
 	
 callback.run_ws()  # запускаем веб-сокет - все входящие платежи 
-				   # будут возвращаться в функцию with_transfer
+		   # будут возвращаться в функцию with_transfer
 
 ```
 
