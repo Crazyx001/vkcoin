@@ -72,13 +72,13 @@ print(result)
 |-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
-`get_user_balance` - возвращает ваш баланс
+`get_my_balance` - возвращает ваш баланс
 ```python
 result = merchant.get_my_balance()
 print(result)
 ```
 #
-[`set_shop_name`](https://vk.com/@hs-marchant-api?anchor=nazvanie-magazina) - возвращает баланс аккаунта
+[`set_shop_name`](https://vk.com/@hs-marchant-api?anchor=nazvanie-magazina) - устанавливает название магазина
 
 Обратите внимание что название может быть закешированно на срок до 5 часов. Сбросить кеш никак нельзя.
 ```python
