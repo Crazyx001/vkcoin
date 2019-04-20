@@ -2,7 +2,7 @@
 # vkcoin
 Враппер для платёжного API VK Coin. https://vk.com/@hs-marchant-api
 
-[![Build Status](https://travis-ci.org/crinny/vkcoin.svg?branch=master)](https://travis-ci.org/crinny/vkcoin) [![PyPI version](https://badge.fury.io/py/vkcoin.svg)](https://badge.fury.io/py/vkcoin)
+[![PyPI version](https://badge.fury.io/py/vkcoin.svg)](https://badge.fury.io/py/vkcoin)
 # Установка
 * Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше
 * Введите следующую команду в командную строку:
