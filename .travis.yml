@@ -1,6 +1,7 @@
 language: python
 python:
 - '3.6'
+before_deploy: "echo Deploying..."
 deploy:
   provider: pypi
   user: crinny
