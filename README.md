@@ -9,19 +9,15 @@
 ```bash
 pip install vkcoin
 ```
-* Или, вы можете собрать библиотеку с GitHub:
-```bash
-pip install git+git://github.com/crinny/vkcoin.git
-```
 * Вы прекрасны!
 # Начало работы
-Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением **.py**, например **test.py**. Вы не можете назвать файл vkcoin.py, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
+Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением .py, например test.py. **Вы не можете назвать файл vkcoin.py**, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
 ```python
 import vkcoin
 ```
-Данная библиотека содержит в себе **2 класса**:
-- **VKCoinApi** - для работы с API VKCoin-а
-- **VKCoinWS** - для получения CallBack сообщения об зачислении коинов
+Библиотека содержит в себе **2 класса**:
+- **VKCoinApi** - для работы с VKCoin API
+- **VKCoinWS** - для получения CallBack сообщений о зачислении коинов
 
 # VKCoinApi
 ```python
@@ -105,13 +101,13 @@ callback = vkcoin.VKCoinWS(token, iframe_link)
 
 **\*** получение токена - перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после `access_token=` и до `&expires_in` (85 символов)
 
-Если способ выше не работает - перейдите по ссылке: `https://oauth.vk.com/token?grant_type=password&client_id=2274003&client_secret=hHbZxrka2uZ6jB1inYsH&username=LOGIN&password=PASSWORD`, перед этим заменив login и password на ваш логин и пароль. После перехода по этой ссылке вам будет выдан расширенный токен.
+Если при использовании способа выше вы получаете ошибку, перейдите по ссылке: `https://oauth.vk.com/token?grant_type=password&client_id=2274003&client_secret=hHbZxrka2uZ6jB1inYsH&username=LOGIN&password=PASSWORD`, перед этим заменив login и password на ваш логин и пароль. После перехода по этой ссылке вам будет выдан расширенный токен.
 
-**\*\*** эту ссылку можно достать в коде страницы vk.com/coin
-1.  Переходим на [vk.com/coin](http://vk.com/coin)
-2.  Используем сочетание клавиш ```ctrl + U``` для просмотра исходного кода страницы
-3. Открываем поиск, вводим `sign=`
-4.  Копируем найденную ссылку, содержащую параметр `sign`
+**\*\*** эту ссылку можно получить в коде страницы vk.com/coin
+1.  Перейдите на [vk.com/coin](http://vk.com/coin)
+2.  Используйте сочетание клавиш ```Ctrl + U``` для просмотра исходного кода страницы
+3.  Откройте поиск, введите `sign=`
+4.  Скопируйте найденную ссылку, содержащую параметр `sign`
 
 После инициализации объекта необходимо зарегистрировать функцию, которая будет обрабатывать входящие платежи. Для этого используется декоратор `handler`
 ```python
@@ -121,10 +117,10 @@ def your_func(data):
 ```
 При получении обратного вызова - входящей транзакции - в зарегестрированную функцию возвращается объект класса `Entity`, который является абстракцией входящего перевода и содержит следующие параметры:
 ```python
-data.user_id - # ваш ID
-data.balance - # баланс вашего аккаунта 
-data.user_from - # ID отправителя (инициатор входящей транзакции)
-data.amount - # количество полученных коинов
+data.user_id  # ваш ID
+data.balance  # баланс вашего аккаунта 
+data.user_from  # ID отправителя (инициатор входящей транзакции)
+data.amount  # количество полученных коинов
 ```
 
 
@@ -133,7 +129,7 @@ data.amount - # количество полученных коинов
 ```python
 import vkcoin
 
-callback = vkcoin.VKCoinWS(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # либо ссылка на iframe
+callback = vkcoin.VKCoinWS(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # или ссылка на iframe
 
 @callback.handler
 def with_transfer(data):
@@ -141,9 +137,10 @@ def with_transfer(data):
     my_balance = data.balance
     sender = data.user_from
     amount = data.amount
-	
-callback.run_ws()  # запускаем веб-сокет - все входящие платежи 
-		   # будут возвращаться в функцию with_transfer
+
+    print(user_id, my_balance, sender, amount)
+
+callback.run_ws()  # запускаем веб-сокет - все входящие платежи будут возвращаться в функцию with_transfer
 
 ```
 
