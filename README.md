@@ -53,7 +53,7 @@ print(result)
 |tx|List|Массив ID переводов для получения или [1] - 1000 последних транзакций со ссылок на оплату, [2] — 100 последних транзакций на текущий аккаунт|
 |_last_tx_|Integer|Если указать номер последней транзакции, то будут возвращены только транзакции после указанной|
 #
-[`send coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
+[`send_coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
 ```python
 result = merchant.send_coins(amount, to_id)  
 print(result)
