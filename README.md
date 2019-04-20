@@ -86,8 +86,30 @@ merchant.set_shop_name(name='Best Shop Ever')
 |-|-|-|
 |name|String|Новое название магазина|
 
+# Callback
+Оффициальный Callback. Все приведённые ниже функции находятся в классе **VKCoinApi**
+[`set_callback_endpoint`](https://vk.com/@hs-marchant-api?anchor=callback-api)
+`set_callback_endpoint` - устанавливает Endpoint
+```python
+merchant.set_callback_endpoint()
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|address|String|Адрес, на который будет поступать информация|
+|Port|Integer|Порт|
+#
+`remove_callback_endpoint` - удаляет Endpoint
+```python
+merchant.remove_callback_endpoint()
+```
+#
+[`callback_start`](https://vk.com/@hs-marchant-api?anchor=callback-api) - запускает сервер для Callback
+```python
+merchant.callback_start()
+```
+
 # VKCoinWS _(CallBack)_
-**Рекомендуется использовать новый Сallback**
+**Рекомендуется использовать новый [Сallback](https://github.com/crinny/vkcoin#callback)**
 
 **VKCoin** для взаимодействия между клиентом и сервером использует протокол WebSocket.
 Данный класс реализован для получения обратных вызовов при входящих транзакциях на аккаунт, доступ к которому может быть предоставлен одним из следующих параметров при создании объекта класса:
