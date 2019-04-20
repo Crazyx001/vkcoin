@@ -14,7 +14,12 @@ except ImportError:
 
 
 class Entity:
-    pass
+    def __init__(**kwargs):
+        for k, v in kwargs.items():
+            if isinstance(v, dict):
+                self.__dict__[k] = Entity(**v)
+            else:
+                self.__dict__[k] = v
 
 
 class VKCoinWS(Thread):
@@ -73,9 +78,8 @@ class VKCoinWS(Thread):
                 print(f'Пополнение на сумму {int(amount) / 1000} от vk.com/id{user_from}')
                 print(f'Текущий баланс: {self.score / 1000}')
             if self.handler:
-                data = Entity()
-                data.__dict__ = {'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
-                                 'amount': amount}
+                data = Entity({'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
+                                 'amount': amount})
                 self.handler_f(data)
         elif len(msg) > 50000:
             msg = json.loads(msg)
@@ -146,8 +150,7 @@ class VKCoinApi:
             if msg:
                 c_sock.sendall(b'HTTP/1.1 200 OK\n\n\n')
                 try:
-                    data = Entity()
-                    data.__dict__ = json.loads(msg.split('\r\n\r\n')[-1])
+                    data = Entity(json.loads(msg.split('\r\n\r\n')[-1])
                 except json.JSONDecodeError:
                     c_sock.close()
                 else:
