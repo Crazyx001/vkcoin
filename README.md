@@ -147,27 +147,10 @@ data.amount  # количество полученных коинов
 
 
 # Примеры
-### Callback
-```python
-import vkcoin
-
-callback = vkcoin.VKCoinWS(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # или ссылка на iframe
-
-@callback.handler
-def with_transfer(data):
-    user_id = data.user_id
-    my_balance = data.balance
-    sender = data.user_from
-    amount = data.amount
-
-    print(user_id, my_balance, sender, amount)
-
-callback.run_ws()  # запускаем веб-сокет - все входящие платежи будут возвращаться в функцию with_transfer
-
-```
+Примеры расположены в отдельной [папке](https://github.com/crinny/vkcoin/tree/master/examples) репозитория.
 
 # Где меня можно найти
-Могу ответить на ваши вопросы
+Я готов ответить на ваши вопросы, связанные с библиотекой.
 * [ВКонтакте Crinny](https://vk.com/crinny)   or  [ВКонтакте Spooti](https://vk.com/edgar_gorobchuk)
 * [Telegram Crinny](https://t.me/truecrinny)  or  [Telegram Spooti](https://t.me/spooti)
 * [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
