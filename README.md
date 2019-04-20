@@ -103,6 +103,8 @@ callback = vkcoin.VKCoinWS(token, iframe_link)
 
 **\*** получение токена - перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после `access_token=` и до `&expires_in` (85 символов)
 
+Если способ выше не работает - перейдите по ссылке: `https://oauth.vk.com/token?grant_type=password&client_id=2274003&client_secret=hHbZxrka2uZ6jB1inYsH&username=LOGIN&password=PASSWORD`, перед этим заменив login и password на ваш логин и пароль. После перехода по этой ссылке вам будет выдан расширенный токен.
+
 **\*\*** эту ссылку можно достать в коде страницы vk.com/coin
 1.  Переходим на [vk.com/coin](http://vk.com/coin)
 2.  Используем сочетание клавиш ```ctrl + U``` для просмотра исходного кода страницы
