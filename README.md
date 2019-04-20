@@ -96,7 +96,7 @@ merchant.set_callback_endpoint()
 |Параметр|Тип|Описание|
 |-|-|-|
 |_address_|String|Адрес, на который будет поступать информация|
-|_Port_|Integer|Порт|
+|_port_|Integer|Порт|
 #
 `remove_callback_endpoint` - удаляет Endpoint
 ```python
