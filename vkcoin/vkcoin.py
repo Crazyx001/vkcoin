@@ -50,7 +50,7 @@ class VKCoinWS(Thread):
         ch = user_id % 32
         self.user_id = user_id
         ws_link = self.iframe_link.replace('https', 'wss').replace('\\', '')
-        ws_link = ws_link.replace('index.html', f'channel/{ch}')
+        ws_link = ws_link.replace('index.html', 'channel/{ch}'.format(ch=ch))
         ws_link += f'&ver=1&upd=1&pass={user_id - 1}'
         return ws_link
 
