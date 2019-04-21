@@ -150,7 +150,7 @@ class VKCoinApi:
             if msg:
                 c_sock.sendall(b'HTTP/1.1 200 OK\n\n\n')
                 try:
-                    data = Entity(json.loads(msg.split('\r\n\r\n')[-1])
+                    data = Entity(json.loads(msg.split('\r\n\r\n')[-1]))
                 except json.JSONDecodeError:
                     c_sock.close()
                 else:
