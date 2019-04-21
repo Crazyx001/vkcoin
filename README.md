@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/vkcoin.svg)](https://badge.fury.io/py/vkcoin)
 [![Week downloads](https://img.shields.io/pypi/dw/vkcoin.svg)](https://pypi.org/project/vkcoin)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
-[![Чат ВКонтакте](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-%D0%92%D0%9A%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B5-informational.svg)](https://vk.me/join/AJQ1d25EgA8/Mv0/xkMvc0i1)]
+[![Чат ВКонтакте](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-%D0%92%D0%9A%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B5-informational.svg)](https://vk.me/join/AJQ1d25EgA8/Mv0/xkMvc0i1)
 [![Чат Telegram](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-Telegram-informational.svg)](https://t.me/vkcoin_python)
 # Установка
 * Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше
