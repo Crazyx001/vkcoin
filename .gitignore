@@ -12,5 +12,6 @@
 # Build script
 build.bat
 
+.travis.yml
 .git
 test.py
