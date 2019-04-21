@@ -110,7 +110,7 @@ merchant.remove_callback_endpoint()
 ```python
 merchant.callback_start()
 ```
-
+ 
 # VKCoinWS _(CallBack)_
 **Рекомендуется использовать новый [Сallback](https://github.com/crinny/vkcoin#callback)**
 
