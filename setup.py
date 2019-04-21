@@ -1,11 +1,11 @@
 import setuptools
 
-with open("README.md", "r", encoding='utf-8') as fh:
+with open("README.txt", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='vkcoin',
-    version='1.11.3',
+    version='1.11.4',
     author="crinny",
     author_email="isfellop@gmail.com",
     description="Враппер для платёжного API VK Coin",
