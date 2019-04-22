@@ -29,6 +29,8 @@ class VKCoinApi:
         self.key = key
         self.reg_endpoint = False
         self.handler = None
+        self.longpoll_handler = None
+        self.longpoll_data = None
 
     def send_coins(self, to_id, amount):
         data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
@@ -85,6 +87,18 @@ class VKCoinApi:
                     c_sock.close()
                 else:
                     self.handler(data)
+    
+    def longpoll_start(self):
+        while True:
+            time.sleep(0.6)
+            transactions = self.get_transactions([2])
+            if self.longpoll_data is None:
+                self.longpoll_data = transactions
+            else:
+                if self.longpoll_data != transactions:
+                    if transactions['response'][0]['to_id'] == self.user_id:
+                        self.longpoll_data = transactions
+                        self.longpoll_handler(transactions['response'][0])
 
     def set_shop_name(self, name):
         data = {'merchantId': self.user_id, 'key': self.key, 'name': name}
@@ -92,6 +106,10 @@ class VKCoinApi:
 
     def cb_handler(self, func):
         self.handler = func
+        return func
+
+    def lp_handler(self, func):
+        self.longpoll_handler = func
         return func
 
 
