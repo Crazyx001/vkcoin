@@ -14,82 +14,12 @@ except ImportError:
 
 
 class Entity:
-    def __init__(**kwargs):
+    def __init__(self, **kwargs):
         for k, v in kwargs.items():
             if isinstance(v, dict):
-                self.__dict__[k] = Entity(**v)
+                self.__dict__[k] = Entity(v)
             else:
                 self.__dict__[k] = v
-
-
-class VKCoinWS(Thread):
-    def __init__(self, token=None, iframe_link=None, notify=False):
-        Thread.__init__(self)
-        self.token = token
-        self.iframe_link = iframe_link
-        self.notify = notify
-        self.score = 0
-        self.user_id = 0
-        self.count_ws_restarts = 0
-        self.link = None
-        self.ws_link = None
-        self.handler_f = None
-
-    def run_ws(self):
-        if self.iframe_link:
-            self.ws_link = self._create_ws_link()
-        else:
-            session = vk.Session(access_token=self.token)
-            api = vk.API(session, v='5.92')
-            self.iframe_link = api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
-            self.ws_link = self._create_ws_link()
-        self.start()
-
-    def _create_ws_link(self):
-        user_id = int(self.iframe_link.split('user_id=')[-1].split('&')[0])
-        ch = user_id % 32
-        self.user_id = user_id
-        ws_link = self.iframe_link.replace('https', 'wss').replace('\\', '')
-        ws_link = ws_link.replace('index.html', 'channel/{ch}'.format(ch=ch))
-        ws_link += '&ver=1&upd=1&pass={user_id}'.format(user_id=user_id - 1)
-        return ws_link
-
-    def run(self):
-        ws = create_connection(self.ws_link)
-        while True:
-            try:
-                msg = ws.recv()
-                self._message_handler(msg)
-            except WebSocketClosed:
-                self.count_ws_restarts += 1
-                if self.count_ws_restarts < 3:
-                    print('WebSocket закрыт. Перезапуск через 5 секунд')
-                    time.sleep(5)
-                    self.run()
-                else:
-                    print('WebSocket окончательно закрыт')
-                    return
-
-    def _message_handler(self, msg):
-        if msg.startswith('TR'):
-            amount, user_from, trans = msg.split()[1:]
-            self.score += int(amount)
-            if self.notify:
-                print(f'Пополнение на сумму {int(amount) / 1000} от vk.com/id{user_from}')
-                print(f'Текущий баланс: {self.score / 1000}')
-            if self.handler:
-                data = Entity({'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
-                                 'amount': amount})
-                self.handler_f(data)
-        elif len(msg) > 50000:
-            msg = json.loads(msg)
-            self.score = msg['score']
-            if self.notify:
-                print('Баланс', msg['score'] / 1000)
-
-    def handler(self, func):
-        self.handler_f = func
-        return func
 
 
 class VKCoinApi:
@@ -150,7 +80,7 @@ class VKCoinApi:
             if msg:
                 c_sock.sendall(b'HTTP/1.1 200 OK\n\n\n')
                 try:
-                    data = Entity(json.loads(msg.split('\r\n\r\n')[-1]))
+                    data = Entity(**json.loads(msg.split('\r\n\r\n')[-1]))
                 except json.JSONDecodeError:
                     c_sock.close()
                 else:
@@ -162,4 +92,74 @@ class VKCoinApi:
 
     def cb_handler(self, func):
         self.handler = func
+        return func
+
+
+class VKCoinWS(Thread):
+    def __init__(self, token=None, iframe_link=None, notify=False):
+        Thread.__init__(self)
+        self.token = token
+        self.iframe_link = iframe_link
+        self.notify = notify
+        self.score = 0
+        self.user_id = 0
+        self.count_ws_restarts = 0
+        self.link = None
+        self.ws_link = None
+        self.handler_f = None
+
+    def run_ws(self):
+        if self.iframe_link:
+            self.ws_link = self._create_ws_link()
+        else:
+            session = vk.Session(access_token=self.token)
+            api = vk.API(session, v='5.92')
+            self.iframe_link = api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
+            self.ws_link = self._create_ws_link()
+        self.start()
+
+    def _create_ws_link(self):
+        user_id = int(self.iframe_link.split('user_id=')[-1].split('&')[0])
+        ch = user_id % 32
+        self.user_id = user_id
+        ws_link = self.iframe_link.replace('https', 'wss').replace('\\', '')
+        ws_link = ws_link.replace('index.html', 'channel/{ch}'.format(ch=ch))
+        ws_link += '&ver=1&upd=1&pass={user_id}'.format(user_id=user_id - 1)
+        return ws_link
+
+    def run(self):
+        ws = create_connection(self.ws_link)
+        while True:
+            try:
+                msg = ws.recv()
+                self._message_handler(msg)
+            except WebSocketClosed:
+                self.count_ws_restarts += 1
+                if self.count_ws_restarts < 3:
+                    print('WebSocket закрыт. Перезапуск через 5 секунд')
+                    time.sleep(5)
+                    self.run()
+                else:
+                    print('WebSocket окончательно закрыт')
+                    return
+
+    def _message_handler(self, msg):
+        if msg.startswith('TR'):
+            amount, user_from, trans = msg.split()[1:]
+            self.score += int(amount)
+            if self.notify:
+                print(f'Пополнение на сумму {int(amount) / 1000} от vk.com/id{user_from}')
+                print(f'Текущий баланс: {self.score / 1000}')
+            if self.handler:
+                data = Entity(**{'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
+                                 'amount': amount})
+                self.handler_f(data)
+        elif len(msg) > 50000:
+            msg = json.loads(msg)
+            self.score = msg['score']
+            if self.notify:
+                print('Баланс', msg['score'] / 1000)
+
+    def handler(self, func):
+        self.handler_f = func
         return func
