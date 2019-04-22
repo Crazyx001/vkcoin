@@ -90,7 +90,7 @@ class VKCoinApi:
     
     def longpoll_start(self):
         while True:
-            time.sleep(0.6)
+            time.sleep(0.2)
             transactions = self.get_transactions([2])
             if self.longpoll_data is None:
                 self.longpoll_data = transactions
