@@ -47,8 +47,10 @@ class VKCoinApi:
             link += '_1'
         return link
 
-    def get_transactions(self, tx):
+    def get_transactions(self, tx, last_tx=None):
         data = {'merchantId': self.user_id, 'key': self.key, 'tx': tx}
+        if last_tx is not None:
+            data['lastTx'] = last_tx
         return requests.post(self.link + 'tx', json=data).json()
 
     def get_user_balance(self, *users):
