@@ -15,3 +15,4 @@ build.bat
 .travis.yml
 .git
 test.py
+private.py
