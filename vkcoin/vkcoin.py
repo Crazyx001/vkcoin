@@ -14,12 +14,22 @@ except ImportError:
 
 
 class Entity:
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            if isinstance(v, dict):
-                self.__dict__[k] = Entity(v)
-            else:
-                self.__dict__[k] = v
+    def __init__(self, data):
+        if isinstance(data, dict):
+            for k, v in data.items():
+                if isinstance(v, dict):
+                    self.__dict__[k] = Entity(v)
+                elif isinstance(v, list):
+                    self.__dict__[k] = [Entity(i) for i in v]
+                else:
+                    self.__dict__[k] = v
+        self._dict = data
+    
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+    
+    def __repr__(self):
+        return str(self._dict)
 
 
 class VKCoinApi:
@@ -30,11 +40,11 @@ class VKCoinApi:
         self.reg_endpoint = False
         self.handler = None
         self.longpoll_handler = None
-        self.longpoll_data = None
+        self.last_trans = None
 
     def send_coins(self, to_id, amount):
         data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
-        return requests.post(self.link + 'send', json=data).json()
+        return Entity(requests.post(self.link + 'send', json=data).json())
 
     def get_payment_url(self, amount, payload=None, free_amount=False):
         if not payload:
@@ -49,13 +59,13 @@ class VKCoinApi:
 
     def get_transactions(self, tx, last_tx=None):
         data = {'merchantId': self.user_id, 'key': self.key, 'tx': tx}
-        if last_tx is not None:
+        if last_tx:
             data['lastTx'] = last_tx
-        return requests.post(self.link + 'tx', json=data).json()
+        return Entity(requests.post(self.link + 'tx', json=data).json())
 
     def get_user_balance(self, *users):
         data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
-        return requests.post(self.link + 'score', json=data).json()
+        return Entity(requests.post(self.link + 'score', json=data).json())
 
     def get_my_balance(self):
         return self.get_user_balance(self.user_id)
@@ -66,11 +76,11 @@ class VKCoinApi:
             address += ':' + str(port)
         self.reg_endpoint = True
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': address}
-        return requests.post(self.link + 'set', json=data).json()
+        return Entity(requests.post(self.link + 'set', json=data).json())
 
     def remove_callback_endpoint(self):
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': None}
-        return requests.post(self.link + 'set', json=data).json()
+        return Entity(requests.post(self.link + 'set', json=data).json())
 
     def callback_start(self):
         if not self.reg_endpoint:
@@ -84,28 +94,28 @@ class VKCoinApi:
             if msg:
                 c_sock.sendall(b'HTTP/1.1 200 OK\n\n\n')
                 try:
-                    data = Entity(**json.loads(msg.split('\r\n\r\n')[-1]))
+                    data = Entity(json.loads(msg.split('\r\n\r\n')[-1]))
                 except json.JSONDecodeError:
                     c_sock.close()
                 else:
                     self.handler(data)
     
-    def longpoll_start(self):
+    def longpoll_start(self, tx, interval=0.2):
+        self.last_trans = self.get_transactions(tx)
         while True:
-            time.sleep(0.2)
-            transactions = self.get_transactions([2])
-            if self.longpoll_data is None:
-                self.longpoll_data = transactions
-            else:
-                if self.longpoll_data != transactions:
-                    if transactions['response'][0]['to_id'] == self.user_id:
-                        self.longpoll_data = transactions
-                        self.longpoll_handler(transactions['response'][0])
+            time.sleep(interval)
+            current_trans = self.get_transactions(tx)
+            if self.last_trans[0] != current_trans[0]:
+                new_trans = current_trans[0]
+                if new_trans.to_id == self.user_id:
+                    self.last_trans = current_trans
+                    if self.longpoll_handler:
+                        self.longpoll_handler(new_trans)
 
     def set_shop_name(self, name):
         data = {'merchantId': self.user_id, 'key': self.key, 'name': name}
-        return requests.post(self.link + 'set', json=data).json()
-
+        return Entity(requests.post(self.link + 'set', json=data).json())
+      
     def cb_handler(self, func):
         self.handler = func
         return func
@@ -113,6 +123,7 @@ class VKCoinApi:
     def lp_handler(self, func):
         self.longpoll_handler = func
         return func
+
 
 
 class VKCoinWS(Thread):
