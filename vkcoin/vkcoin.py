@@ -44,7 +44,7 @@ class VKCoinApi:
 
     def send_coins(self, to_id, amount):
         data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
-        return Entity(requests.post(self.link + 'send', json=data).json())
+        return requests.post(self.link + 'send', json=data).json()
 
     def get_payment_url(self, amount, payload=None, free_amount=False):
         if not payload:
@@ -61,11 +61,11 @@ class VKCoinApi:
         data = {'merchantId': self.user_id, 'key': self.key, 'tx': tx}
         if last_tx:
             data['lastTx'] = last_tx
-        return Entity(requests.post(self.link + 'tx', json=data).json())
+        return requests.post(self.link + 'tx', json=data).json()
 
     def get_user_balance(self, *users):
         data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
-        return Entity(requests.post(self.link + 'score', json=data).json())
+        return requests.post(self.link + 'score', json=data).json()
 
     def get_my_balance(self):
         return self.get_user_balance(self.user_id)
@@ -76,11 +76,11 @@ class VKCoinApi:
             address += ':' + str(port)
         self.reg_endpoint = True
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': address}
-        return Entity(requests.post(self.link + 'set', json=data).json())
+        return requests.post(self.link + 'set', json=data).json()
 
     def remove_callback_endpoint(self):
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': None}
-        return Entity(requests.post(self.link + 'set', json=data).json())
+        return requests.post(self.link + 'set', json=data).json()
 
     def callback_start(self):
         if not self.reg_endpoint:
@@ -101,10 +101,10 @@ class VKCoinApi:
                     self.handler(data)
     
     def longpoll_start(self, tx, interval=0.2):
-        self.last_trans = self.get_transactions(tx)
+        self.last_trans = Entity(self.get_transactions(tx)).response
         while True:
             time.sleep(interval)
-            current_trans = self.get_transactions(tx)
+            current_trans = Entity(self.get_transactions(tx)).response
             if self.last_trans[0] != current_trans[0]:
                 new_trans = current_trans[0]
                 if new_trans.to_id == self.user_id:
@@ -114,7 +114,7 @@ class VKCoinApi:
 
     def set_shop_name(self, name):
         data = {'merchantId': self.user_id, 'key': self.key, 'name': name}
-        return Entity(requests.post(self.link + 'set', json=data).json())
+        return requests.post(self.link + 'set', json=data).json()
       
     def cb_handler(self, func):
         self.handler = func
@@ -182,7 +182,7 @@ class VKCoinWS(Thread):
                 print(f'Пополнение на сумму {int(amount) / 1000} от vk.com/id{user_from}')
                 print(f'Текущий баланс: {self.score / 1000}')
             if self.handler:
-                data = Entity(**{'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
+                data = Entity({'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
                                  'amount': amount})
                 self.handler_f(data)
         elif len(msg) > 50000:
