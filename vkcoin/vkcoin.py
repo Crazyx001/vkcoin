@@ -144,7 +144,10 @@ class VKCoinWS(Thread):
         else:
             response = requests.get(self.method_url + 'apps.get', params={'access_token': self.token, 'app_id': 6915965,
                                                                           'v': 5.52})
-            self.iframe_link = response.json()['response']['items'][0]['mobile_iframe_url']
+            try:
+                self.iframe_link = response.json()['response']['items'][0]['mobile_iframe_url']
+            except KeyError:
+                raise Exception('Bad token')
             self.ws_link = self._create_ws_link()
         self.start()
 
