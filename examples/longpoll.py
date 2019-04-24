@@ -22,4 +22,4 @@ def payment_received(data):
     # Вместо print вы можете выполнить ваши действия
 
 
-merchant.longpoll_start()  # Запускаем LongPoll
+merchant.longpoll_start(tx=[1])  # Запускаем LongPoll
