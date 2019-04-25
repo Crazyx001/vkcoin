@@ -90,7 +90,7 @@ merchant.set_shop_name(name='Best Shop Ever')
 #
 `longpoll_start` - запускает LongPoll
 ```python
-merchant.set_shop_name(name='Best Shop Ever')
+merchant.longpoll_start(tx=[1], interval=0.05)
 ```
 |Параметр|Тип|Описание|
 |-|-|-|
