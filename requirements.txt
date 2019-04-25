@@ -1,3 +1,2 @@
-vk
 websocket_client
 requests
