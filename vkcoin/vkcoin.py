@@ -129,6 +129,7 @@ class VKCoinApi:
 class VKCoinWS(Thread):
     def __init__(self, token=None, iframe_link=None, notify=False):
         Thread.__init__(self)
+        self.method_url = 'https://api.vk.com/method/'
         self.token = token
         self.iframe_link = iframe_link
         self.notify = notify
@@ -143,9 +144,12 @@ class VKCoinWS(Thread):
         if self.iframe_link:
             self.ws_link = self._create_ws_link()
         else:
-            session = vk.Session(access_token=self.token)
-            api = vk.API(session, v='5.92')
-            self.iframe_link = api.apps.get(app_id=6915965)['items'][0]['mobile_iframe_url']
+            response = requests.get(self.method_url + 'apps.get', params={'access_token': self.token, 'app_id': 6915965,
+                                                                          'v': 5.52})
+            try:
+                self.iframe_link = response.json()['response']['items'][0]['mobile_iframe_url']
+            except KeyError:
+                raise Exception('Bad token')
             self.ws_link = self._create_ws_link()
         self.start()
 
@@ -183,7 +187,7 @@ class VKCoinWS(Thread):
                 print(f'Текущий баланс: {self.score / 1000}')
             if self.handler:
                 data = Entity({'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
-                                 'amount': amount})
+                               'amount': amount})
                 self.handler_f(data)
         elif len(msg) > 50000:
             msg = json.loads(msg)
