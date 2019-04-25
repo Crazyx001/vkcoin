@@ -1,17 +1,21 @@
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-from vk_api.utils import get_random_id
-import vk_api
+import vk_requests
 import vkcoin
 
-vk_session = vk_api.VkApi(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Токен ВКонтакте
+from vbio import VkBot
+from vbio.servers import LongPoolClient
+
+api = vk_requests.create_api(service_token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Токен ВКонтакте
 merchant = vkcoin.VKCoinApi(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Ваш ID и ключ
+bot = VkBot(api=api)
+server = LongPoolClient(bot)  # Инициализируем LongPoll
 
-longpoll = VkBotLongPoll(vk_session, group_id=123456789)  # Инициализируем LongPoll
-vk = vk_session.get_api()
 
-for event in longpoll.listen():
-    if event.type == VkBotEventType.MESSAGE_NEW:  # Если пользователь отправил нам любое сообщение
-        user_balance = merchant.get_user_balance(event.obj.from_id)  # Получаем его баланс
-        user_balance = float(user_balance['response'][str(event.obj.from_id)]) / 1000  # Переводим всё в читабельный вид
-        vk.messages.send(user_id=event.obj.from_id, message='Ваш баланс: {balance}'.format(balance=user_balance), random_id=get_random_id())  # Отправляем ответ
-        # Вместо этого вы можете выполнить ваши действия
+@bot.message_handler()  # При любом сообщении
+def on_message(message):
+    user_balance = merchant.get_user_balance(message.from_id)  # Получаем баланс отправителя
+    user_balance = float(user_balance['response'][str(message.from_id)]) / 1000  # Переводим всё в читабельный вид
+    message.answer(message='Ваш баланс: {balance}'.format(balance=user_balance))
+
+
+if __name__ == '__main__':
+    server.run()
