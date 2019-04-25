@@ -13,6 +13,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/crinny/vkcoin",
     packages=['vkcoin'],
-    install_requires=['requests', 'websocket_client', 'vk'],
+    install_requires=['requests', 'websocket_client'],
     classifiers=['Programming Language :: Python :: 3.6'],
 )
