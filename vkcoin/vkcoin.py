@@ -70,10 +70,11 @@ class VKCoinApi:
     def get_my_balance(self):
         return self.get_user_balance(self.user_id)
 
-    def set_callback_endpoint(self, address=None, port=80):
-        if not address:
-            address = 'http://' + socket.gethostbyname(socket.gethostname())
-            address += ':' + str(port)
+    def set_callback_endpoint(self, address=None):
+        try:
+            self.port = int(address.split(':')[1])
+        except:
+            raise Exception('Неверный порт')
         self.reg_endpoint = True
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': address}
         return requests.post(self.link + 'set', json=data).json()
@@ -84,15 +85,15 @@ class VKCoinApi:
 
     def callback_start(self):
         if not self.reg_endpoint:
-            self.set_callback_endpoint()
+            raise Exception('Необходима регистрация CallBack-endpoint')
         sock = socket.socket()
-        sock.bind(('', 80))
+        sock.bind(('', self.port))
         sock.listen(1)
         while True:
-            c_sock, addr = sock.accept()
+            c_sock, _ = sock.accept()
             msg = c_sock.recv(1024).decode('utf-8')
             if msg:
-                c_sock.sendall(b'HTTP/1.1 200 OK\n\n\n')
+                c_sock.send(b'HTTP/1.1 200 OK\n\n\n')
                 try:
                     data = Entity(json.loads(msg.split('\r\n\r\n')[-1]))
                 except json.JSONDecodeError:
