@@ -1,21 +1,29 @@
-
 # vkcoin
 Враппер для платёжного API VK Coin. https://vk.com/@hs-marchant-api
+
+[![PyPI version](https://badge.fury.io/py/vkcoin.svg)](https://badge.fury.io/py/vkcoin)
+[![Week downloads](https://img.shields.io/pypi/dw/vkcoin.svg)](https://pypi.org/project/vkcoin)
+[![Чат ВКонтакте](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-%D0%92%D0%9A%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B5-informational.svg)](https://vk.me/join/AJQ1d25EgA8/Mv0/xkMvc0i1)
+[![Чат Telegram](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-Telegram-informational.svg)](https://t.me/vkcoin_python)
 # Установка
 * Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше
 * Введите следующую команду в командную строку:
 ```bash
 pip install vkcoin
 ```
+Если вы любите приключения, можно установить библиотеку с GitHub. В таком случае она может работать нестабильно:
+```bash
+pip install git+git://github.com/crinny/vkcoin.git
+```
 * Вы прекрасны!
 # Начало работы
-Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением **.py**, например **test.py**. Вы не можете назвать файл vkcoin.py, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
+Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением .py, например test.py. **Вы не можете назвать файл vkcoin.py**, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
 ```python
 import vkcoin
 ```
-Данная библиотека содержит в себе **2 класса**:
-- **VKCoinApi** - для работы с API VKCoin-а
-- **VKCoinWS** - для получения CallBack сообщения об зачислении коинов
+Библиотека содержит в себе **2 класса**:
+- **VKCoinApi** - для работы с VKCoin API
+- **VKCoinWS** - для получения CallBack сообщений о зачислении коинов
 
 # VKCoinApi
 ```python
@@ -49,9 +57,9 @@ print(result)
 |tx|List|Массив ID переводов для получения или [1] - 1000 последних транзакций со ссылок на оплату, [2] — 100 последних транзакций на текущий аккаунт|
 |_last_tx_|Integer|Если указать номер последней транзакции, то будут возвращены только транзакции после указанной|
 #
-[`send coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
+[`send_coins`](https://vk.com/@hs-marchant-api?anchor=perevod) - делает перевод другому пользователю
 ```python
-result = merchant.send_coins(amount, to_id)  
+result = merchant.send_coins(to_id, amount)
 print(result)
 ```
 |Параметр|Тип|Описание|
@@ -68,13 +76,55 @@ print(result)
 |-|-|
 Integer|ID аккаунтов, баланс которых нужно получить|
 #
-`get_user_balance` - возвращает ваш баланс
+`get_my_balance` - возвращает ваш баланс
 ```python
 result = merchant.get_my_balance()
 print(result)
 ```
+#
+[`set_shop_name`](https://vk.com/@hs-marchant-api?anchor=nazvanie-magazina) - устанавливает название магазина
 
+Обратите внимание что название может быть закешированно на срок до 5 часов. Сбросить кеш никак нельзя.
+```python
+merchant.set_shop_name(name='Best Shop Ever')
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|name|String|Новое название магазина|
+#
+`longpoll_start` - запускает LongPoll
+```python
+merchant.longpoll_start(tx=[1], interval=0.05)
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|tx|List|Массив ID переводов для получения или [1] - 1000 последних транзакций со ссылок на оплату, [2] — 100 последних транзакций на текущий аккаунт|
+|interval|Integer|Раз в столько секунд будет происходить опрос серверов на новые платежи|
+
+# Callback
+Оффициальный Callback. Поднимает сервер и принимает входящие запросы от VK Coin. Все приведённые ниже функции находятся в классе **VKCoinApi**. Перед запуском сервера, необхдимо установить Endpoint. Этот тип получения платежей не будет работать при отсутствии статичного IP.
+
+`set_callback_endpoint` - устанавливает Endpoint
+```python
+merchant.set_callback_endpoint(address='127.0.0.1:80')
+```
+|Параметр|Тип|Описание|
+|-|-|-|
+|address|String|Адрес, на который будет поступать информация и порт через двоеточие|
+#
+`remove_callback_endpoint` - удаляет Endpoint
+```python
+merchant.remove_callback_endpoint()
+```
+#
+[`callback_start`](https://vk.com/@hs-marchant-api?anchor=callback-api) - запускает сервер для Callback
+```python
+merchant.callback_start()
+```
+ 
 # VKCoinWS _(CallBack)_
+**Рекомендуется использовать новый [Сallback](https://github.com/crinny/vkcoin#callback)**
+
 **VKCoin** для взаимодействия между клиентом и сервером использует протокол WebSocket.
 Данный класс реализован для получения обратных вызовов при входящих транзакциях на аккаунт, доступ к которому может быть предоставлен одним из следующих параметров при создании объекта класса:
 ```python
@@ -87,11 +137,13 @@ callback = vkcoin.VKCoinWS(token, iframe_link)
 
 **\*** получение токена - перейдите по [ссылке](https://vk.cc/9f4IXA), нажмите "Разрешить" и скопируйте часть адресной строки после `access_token=` и до `&expires_in` (85 символов)
 
-**\*\*** эту ссылку можно достать в коде страницы vk.com/coin
-1.  Переходим на [vk.com/coin](http://vk.com/coin)
-2.  Используем сочетание клавиш ```ctrl + U``` для просмотра исходного кода страницы
-3. Открываем поиск, вводим `sign=`
-4.  Копируем найденную ссылку, содержащую параметр `sign`
+Если при использовании способа выше вы получаете ошибку, перейдите по ссылке: `https://oauth.vk.com/token?grant_type=password&client_id=2274003&client_secret=hHbZxrka2uZ6jB1inYsH&username=LOGIN&password=PASSWORD`, перед этим заменив login и password на ваш логин и пароль. После перехода по этой ссылке вам будет выдан расширенный токен.
+
+**\*\*** эту ссылку можно получить в коде страницы vk.com/coin
+1.  Перейдите на [vk.com/coin](http://vk.com/coin)
+2.  Используйте сочетание клавиш ```Ctrl + U``` для просмотра исходного кода страницы
+3.  Откройте поиск, введите `sign=`
+4.  Скопируйте найденную ссылку, содержащую параметр `sign`
 
 После инициализации объекта необходимо зарегистрировать функцию, которая будет обрабатывать входящие платежи. Для этого используется декоратор `handler`
 ```python
@@ -101,34 +153,37 @@ def your_func(data):
 ```
 При получении обратного вызова - входящей транзакции - в зарегестрированную функцию возвращается объект класса `Entity`, который является абстракцией входящего перевода и содержит следующие параметры:
 ```python
-data.user_id - # ваш ID
-data.balance - # баланс вашего аккаунта 
-data.user_from - # ID отправителя (инициатор входящей транзакции)
-data.amount - # количество полученных коинов
+data.user_id  # ваш ID
+data.balance  # баланс вашего аккаунта 
+data.user_from  # ID отправителя (инициатор входящей транзакции)
+data.amount  # количество полученных коинов
 ```
 
+# Longpoll
+
+Постоянно опрашивает сервер на наличие новых платежей и при поступлении таковых, оповещает об этом через декоратор. Все приведённые ниже функции находятся в классе **VKCoinApi**
+
+После инициализации объекта необходимо зарегистрировать функцию, которая будет обрабатывать входящие платежи. Для этого используется декоратор `lp_handler`
+```python
+@callback.lp_handler
+def your_func(data):
+	do_something...
+```
+При получении обратного вызова - входящей транзакции - в зарегестрированную функцию возвращается объект класса `Entity`, который является абстракцией входящего перевода и содержит следующие параметры:
+```python
+data.id  # ID платежа
+data.to_id  # Ваш ID
+data.balance  # баланс вашего аккаунта 
+data.from_id  # ID отправителя (инициатор входящей транзакции)
+data.amount  # количество полученных коинов
+data.created_at  # Unix Timestamp, когда был совершён перевод
+```
 
 # Примеры
-### Callback
-```python
-import vkcoin
-
-callback = vkcoin.VKCoinApi(token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx') # либо ссылка на iframe
-
-@callback.handler
-def with_transfer(data):
-    user_id = data.user_id
-    my_balance = data.balance
-    sender = data.user_from
-    amount = data.amount
-	
-callback.run_ws()  # запускаем веб-сокет - все входящие платежи 
-				   # будут возвращаться в функцию with_transfer
-
-```
+Примеры расположены в отдельной [папке](https://github.com/crinny/vkcoin/tree/master/examples) репозитория.
 
 # Где меня можно найти
-Могу ответить на ваши вопросы
+Я готов ответить на ваши вопросы, связанные с библиотекой.
 * [ВКонтакте Crinny](https://vk.com/crinny)   or  [ВКонтакте Spooti](https://vk.com/edgar_gorobchuk)
 * [Telegram Crinny](https://t.me/truecrinny)  or  [Telegram Spooti](https://t.me/spooti)
 * [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
