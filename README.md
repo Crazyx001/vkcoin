@@ -1,13 +1,12 @@
 # vkcoin
-Враппер для платёжного API VK Coin. https://vk.com/@hs-marchant-api
+Билиотека для платёжного API VK Coin. Оффициальная документация: https://vk.com/@hs-marchant-api
 
 [![PyPI version](https://badge.fury.io/py/vkcoin.svg)](https://badge.fury.io/py/vkcoin)
 [![Week downloads](https://img.shields.io/pypi/dw/vkcoin.svg)](https://pypi.org/project/vkcoin)
 [![Чат ВКонтакте](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-%D0%92%D0%9A%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B5-informational.svg)](https://vk.me/join/AJQ1d25EgA8/Mv0/xkMvc0i1)
-[![Чат Telegram](https://img.shields.io/badge/%D0%A7%D0%B0%D1%82-Telegram-informational.svg)](https://t.me/vkcoin_python)
 # Установка
-* Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше
-* Введите следующую команду в командную строку:
+* Скачайте и установите [Python](https://www.python.org/downloads/) версии 3.6 и выше, если он не установлен
+* Введите следующую команду в [командную строку](https://beginpc.ru/windows/komandnaya-stroka):
 ```bash
 pip install vkcoin
 ```
@@ -17,7 +16,7 @@ pip install git+git://github.com/crinny/vkcoin.git
 ```
 * Вы прекрасны!
 # Начало работы
-Для начала разработки, необходимо создать в своей папке исполняемый файл с расширением .py, например test.py. **Вы не можете назвать файл vkcoin.py**, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
+Для начала разработки, необходимо создать исполняемый файл с расширением .py, например test.py. **Вы не можете назвать файл vkcoin.py**, так как это приведёт к конфликту. Теперь файл нужно открыть и импортировать библиотеку:
 ```python
 import vkcoin
 ```
@@ -99,7 +98,7 @@ merchant.longpoll_start(tx=[1], interval=0.05)
 |Параметр|Тип|Описание|
 |-|-|-|
 |tx|List|Массив ID переводов для получения или [1] - 1000 последних транзакций со ссылок на оплату, [2] — 100 последних транзакций на текущий аккаунт|
-|interval|Integer|Раз в столько секунд будет происходить опрос серверов на новые платежи|
+|interval|Integer|Частота опроса серверов на новые платежи в секундах|
 
 # Callback
 Оффициальный Callback. Поднимает сервер и принимает входящие запросы от VK Coin. Все приведённые ниже функции находятся в классе **VKCoinApi**
@@ -185,6 +184,6 @@ data.created_at  # Unix Timestamp, когда был совершён перев
 
 # Где меня можно найти
 Я готов ответить на ваши вопросы, связанные с библиотекой.
-* [ВКонтакте Crinny](https://vk.com/crinny)   or  [ВКонтакте Spooti](https://vk.com/edgar_gorobchuk)
-* [Telegram Crinny](https://t.me/truecrinny)  or  [Telegram Spooti](https://t.me/spooti)
+* [ВКонтакте Crinny](https://vk.com/crinny)  or [ВКонтакте Spooti](https://vk.com/edgar_gorobchuk)
+* [Telegram Crinny](https://t.me/truecrinny) or [Telegram Spooti](https://t.me/spooti)
 * [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
