@@ -7,8 +7,6 @@ import socket
 
 try:
     from websocket import create_connection
-    from websocket import WebSocketConnectionClosedException as WebSocketClosed
-    import vk
 except ImportError:
     pass
 
@@ -41,6 +39,7 @@ class VKCoinApi:
         self.handler = None
         self.longpoll_handler = None
         self.last_trans = None
+        self.port = None
 
     def send_coins(self, to_id, amount):
         data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
@@ -73,7 +72,7 @@ class VKCoinApi:
     def set_callback_endpoint(self, address=None):
         try:
             self.port = int(address.split(':')[1])
-        except:
+        except ValueError:
             raise Exception('Неверный порт')
         self.reg_endpoint = True
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': address}
@@ -126,7 +125,6 @@ class VKCoinApi:
         return func
 
 
-
 class VKCoinWS(Thread):
     def __init__(self, token=None, iframe_link=None, notify=False):
         Thread.__init__(self)
@@ -136,19 +134,19 @@ class VKCoinWS(Thread):
         self.notify = notify
         self.score = 0
         self.user_id = 0
-        self.count_ws_restarts = 0
         self.link = None
         self.ws_link = None
         self.handler_f = None
+        self.ws = None
 
     def run_ws(self):
         if self.iframe_link:
             self.ws_link = self._create_ws_link()
         else:
             response = requests.get(self.method_url + 'apps.get', params={'access_token': self.token, 'app_id': 6915965,
-                                                                          'v': 5.52})
+                                                                          'v': 5.52}).json()
             try:
-                self.iframe_link = response.json()['response']['items'][0]['mobile_iframe_url']
+                self.iframe_link = response['response']['items'][0]['mobile_iframe_url']
             except KeyError:
                 raise Exception('Bad token')
             self.ws_link = self._create_ws_link()
@@ -164,20 +162,15 @@ class VKCoinWS(Thread):
         return ws_link
 
     def run(self):
-        ws = create_connection(self.ws_link)
+        self.ws = create_connection(self.ws_link)
         while True:
             try:
-                msg = ws.recv()
+                msg = self.ws.recv()
                 self._message_handler(msg)
-            except WebSocketClosed:
-                self.count_ws_restarts += 1
-                if self.count_ws_restarts < 3:
-                    print('WebSocket закрыт. Перезапуск через 5 секунд')
-                    time.sleep(5)
-                    self.run()
-                else:
-                    print('WebSocket окончательно закрыт')
-                    return
+            except Exception as e:
+                print('Send this to crinny: ', str(e))
+                self.ws = create_connection(self.ws_link)
+            time.sleep(0.1)
 
     def _message_handler(self, msg):
         if msg.startswith('TR'):
