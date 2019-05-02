@@ -1,12 +1,11 @@
-*.pyc
 /dist/
 /build/
 /main/
+/.idea/
 /*.egg-info
 /*.egg
-build.bat
 .travis.yml
 .git
+*.pyc
 test.py
 private.py
-/.idea/

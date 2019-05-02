@@ -4,11 +4,7 @@ from threading import Thread
 from random import randint
 import json
 import socket
-
-try:
-    from websocket import create_connection
-except ImportError:
-    pass
+from websocket import create_connection, WebSocketConnectionClosedException
 
 
 class Entity:
@@ -22,10 +18,10 @@ class Entity:
                 else:
                     self.__dict__[k] = v
         self._dict = data
-    
+
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
-    
+
     def __repr__(self):
         return str(self._dict)
 
@@ -140,25 +136,24 @@ class VKCoinWS(Thread):
         self.ws = None
 
     def run_ws(self):
-        if self.iframe_link:
-            self.ws_link = self._create_ws_link()
-        else:
+        self.ws_link = self._create_ws_link()
+        self.start()
+
+    def _create_ws_link(self):
+        if not self.iframe_link:
             response = requests.get(self.method_url + 'apps.get', params={'access_token': self.token, 'app_id': 6915965,
                                                                           'v': 5.52}).json()
             try:
                 self.iframe_link = response['response']['items'][0]['mobile_iframe_url']
             except KeyError:
-                raise Exception('Bad token')
-            self.ws_link = self._create_ws_link()
-        self.start()
+                raise Exception('Неверный токег')
 
-    def _create_ws_link(self):
         user_id = int(self.iframe_link.split('user_id=')[-1].split('&')[0])
         ch = user_id % 32
         self.user_id = user_id
         ws_link = self.iframe_link.replace('https', 'wss').replace('\\', '')
-        ws_link = ws_link.replace('index.html', 'channel/{ch}'.format(ch=ch))
-        ws_link += '&ver=1&upd=1&pass={user_id}'.format(user_id=user_id - 1)
+        ws_link = ws_link.replace('index.html', f'channel/{ch}')
+        ws_link += f'&ver=1&upd=1&pass={user_id - 1}'
         return ws_link
 
     def run(self):
@@ -167,8 +162,7 @@ class VKCoinWS(Thread):
             try:
                 msg = self.ws.recv()
                 self._message_handler(msg)
-            except Exception as e:
-                print('Send this to crinny: ', str(e))
+            except WebSocketConnectionClosedException:
                 self.ws = create_connection(self.ws_link)
             time.sleep(0.1)
 
@@ -188,6 +182,14 @@ class VKCoinWS(Thread):
             self.score = msg['score']
             if self.notify:
                 print('Баланс', msg['score'] / 1000)
+
+    def get_top(self, top_type='user'):
+        if not self.ws_link:
+            self.ws_link = self._create_ws_link()
+        ws = create_connection(self.ws_link)
+        init = json.loads(ws.recv())
+        ws.close()
+        return init.get('top').get(f'{top_type}Top')
 
     def handler(self, func):
         self.handler_f = func
