@@ -9,3 +9,4 @@ build.bat
 .git
 test.py
 private.py
+/.idea/
