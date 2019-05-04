@@ -4,29 +4,14 @@ from threading import Thread
 from random import randint
 import json
 import socket
+import sys
+import subprocess
+
 try:
     from websocket import create_connection, WebSocketConnectionClosedException
 except ImportError:
-    print('Библиотека websocket_client не найдена.')
-
-
-class Entity:
-    def __init__(self, data):
-        if isinstance(data, dict):
-            for k, v in data.items():
-                if isinstance(v, dict):
-                    self.__dict__[k] = Entity(v)
-                elif isinstance(v, list):
-                    self.__dict__[k] = [Entity(i) for i in v]
-                else:
-                    self.__dict__[k] = v
-        self._dict = data
-
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
-
-    def __repr__(self):
-        return str(self._dict)
+    subprocess.call('pip install websocket-client')
+    sys.exit()
 
 
 class VKCoinApi:
@@ -93,17 +78,17 @@ class VKCoinApi:
             if msg:
                 c_sock.send(b'HTTP/1.1 200 OK\n\n\n')
                 try:
-                    data = Entity(json.loads(msg.split('\r\n\r\n')[-1]))
+                    data = json.loads(msg.split('\r\n\r\n')[-1])
                 except json.JSONDecodeError:
                     c_sock.close()
                 else:
                     self.handler(data)
-    
+
     def longpoll_start(self, tx, interval=0.2):
-        self.last_trans = Entity(self.get_transactions(tx)).response
+        self.last_trans = self.get_transactions(tx)['response']
         while True:
             time.sleep(interval)
-            current_trans = Entity(self.get_transactions(tx)).response
+            current_trans = self.get_transactions(tx)['response']
             if self.last_trans[0] != current_trans[0]:
                 new_trans = current_trans[0]
                 if new_trans.to_id == self.user_id:
@@ -171,19 +156,19 @@ class VKCoinWS(Thread):
 
     def _message_handler(self, msg):
         if msg.startswith('TR'):
-            amount, user_from, trans = msg.split()[1:]
+            amount, user_from, payload = msg.split()[1:]
             self.score += int(amount)
             if self.notify:
                 print(f'Пополнение на сумму {int(amount) / 1000} от vk.com/id{user_from}')
                 print(f'Текущий баланс: {self.score / 1000}')
             if self.handler:
-                data = Entity({'user_id': self.user_id, 'balance': self.score, 'user_from': user_from,
-                               'amount': amount})
+                data = {'user_id': self.user_id, 'balance': self.score, 'user_from': user_from, 'amount': amount,
+                        'payload': payload}
                 self.handler_f(data)
         elif len(msg) > 50000:
-            msg = json.loads(msg)
-            self.score = msg['score']
             if self.notify:
+                msg = json.loads(msg)
+                self.score = msg['score']
                 print('Баланс', msg['score'] / 1000)
 
     def get_top(self, top_type='user'):
