@@ -91,7 +91,7 @@ class VKCoinApi:
             current_trans = self.get_transactions(tx)['response']
             if self.last_trans[0] != current_trans[0]:
                 new_trans = current_trans[0]
-                if new_trans.to_id == self.user_id:
+                if new_trans['to_id'] == self.user_id:
                     self.last_trans = current_trans
                     if self.longpoll_handler:
                         self.longpoll_handler(new_trans)
