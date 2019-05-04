@@ -15,8 +15,8 @@ def payment_received(data):
     :param data['amount']: Количество полученных VK Coin
     """
 
-    user_id = data.to_id
-    amount = data.amount
+    user_id = data['from_id']
+    amount = data['amount']
 
     print('Получен платёж на сумму {amount} от {user_id}'.format(amount=amount, user_id=user_id))
     # Вместо print вы можете выполнить ваши действия
