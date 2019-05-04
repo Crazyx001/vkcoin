@@ -4,7 +4,10 @@ from threading import Thread
 from random import randint
 import json
 import socket
-from websocket import create_connection, WebSocketConnectionClosedException
+try:
+    from websocket import create_connection, WebSocketConnectionClosedException
+except ImportError:
+    print('Библиотека websocket_client не найдена.')
 
 
 class Entity:
