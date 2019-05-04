@@ -25,8 +25,8 @@ class VKCoinApi:
         self.last_trans = None
         self.port = None
 
-    def send_coins(self, to_id, amount):
-        data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
+    def send_coins(self, to_id, amount, mark_as_merchant=False):
+        data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount, 'markAsMerchant': mark_as_merchant}
         return requests.post(self.link + 'send', json=data).json()
 
     def get_payment_url(self, amount, payload=None, free_amount=False):
@@ -35,7 +35,7 @@ class VKCoinApi:
         user_id = '{:x}'.format(self.user_id)
         amount = '{:x}'.format(amount)
         payload = '{:x}'.format(payload)
-        link = f'vk.com/coin#m{user_id}_{amount}_{payload}'
+        link = f'https://vk.com/coin#m{user_id}_{amount}_{payload}'
         if free_amount:
             link += '_1'
         return link
@@ -156,6 +156,7 @@ class VKCoinWS(Thread):
 
     def _message_handler(self, msg):
         if msg.startswith('TR'):
+            print(msg)
             amount, user_from, payload = msg.split()[1:]
             self.score += int(amount)
             if self.notify:
