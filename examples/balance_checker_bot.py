@@ -2,12 +2,12 @@ import vk_requests
 import vkcoin
 
 from vbio import VkBot
-from vbio.servers import LongPoolClient
+from vbio.handlers import LongPollClient
 
 api = vk_requests.create_api(service_token='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Токен ВКонтакте
 merchant = vkcoin.VKCoinApi(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Ваш ID и ключ
 bot = VkBot(api=api)
-server = LongPoolClient(bot)  # Инициализируем LongPoll
+server = LongPollClient(bot)  # Инициализируем LongPoll
 
 
 @bot.message_handler()  # При любом сообщении

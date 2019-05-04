@@ -8,11 +8,11 @@ def payment_received(data):
     """
     При получении платежа будет запущена эта функция. Она может называться как угодно
 
-    :param data.to_id: Ваш ID ВКонтакте
-    :param data.id: ID платежа
-    :param data.created_at: Unix timestamp, время когда был совершён платёж
-    :param data.from_id: ID отправителя платежа
-    :param data.amount: Количество полученных VK Coin
+    :param data['to_id']: Ваш ID ВКонтакте
+    :param data['id']: ID платежа
+    :param data['created_at']: Unix timestamp, время когда был совершён платёж
+    :param data['from_id']: ID отправителя платежа
+    :param data['amount']: Количество полученных VK Coin
     """
 
     user_id = data.to_id
