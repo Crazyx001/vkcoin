@@ -32,9 +32,9 @@ class VKCoinApi:
     def get_payment_url(self, amount, payload=None, free_amount=False):
         if not payload:
             payload = randint(-2e9, 2e9)
-        user_id = hex(self.user_id)[2:]
-        amount = hex(amount)[2:]
-        payload = hex(payload)[2:]
+        user_id = '{:x}'.format(self.user_id)
+        amount = '{:x}'.format(amount)
+        payload = '{:x}'.format(payload)
         link = f'vk.com/coin#m{user_id}_{amount}_{payload}'
         if free_amount:
             link += '_1'
