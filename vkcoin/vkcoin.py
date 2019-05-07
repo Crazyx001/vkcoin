@@ -118,10 +118,10 @@ class VKCoin:
         return decorator
 
     def run_longpoll(self, tx, interval=0.2):
-        self.longpoll_transaction = self.get_transactions(tx)['response']
+        self.longpoll_transaction = self.get_transactions(tx)
         while True:
             time.sleep(interval)
-            current_transaction = self.get_transactions(tx)['response']
+            current_transaction = self.get_transactions(tx)
             if self.longpoll_transaction[0] != current_transaction[0]:
                 new_transaction = current_transaction[0]
                 if new_transaction['to_id'] == self.user_id:
@@ -138,7 +138,7 @@ class VKCoin:
                 message = self.websocket_instance.recv()
                 if message.startswith('TR'):
                     amount, user_from, payload = message.split()[1:]
-                    payload = self.get_transactions([payload])['response'][0]['payload']
+                    payload = self.get_transactions([payload])[0]['payload']
                     data = {'from_id': user_from, 'to_id': self.user_id, 'amount': amount, 'payload': payload}
                     if self.websocket_handler:
                         self.websocket_handler(data)
