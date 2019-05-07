@@ -3,14 +3,14 @@ import vkcoin
 merchant = vkcoin.VKCoin(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Ваш ID и ключ
 
 
-@merchant.payment_handler(handler_type='longpoll')
+@merchant.payment_handler(handler_type='websocket')
 def payment_received(data):
     """
     При получении платежа будет запущена эта функция. Она может называться как угодно
+
     :param data['to_id']: Ваш ID ВКонтакте
-    :param data['id']: ID платежа
-    :param data['created_at']: Unix timestamp, время когда был совершён платёж
-    :param data['from_id']: ID отправителя платежа
+    :param data['balance']: Ваш текущий баланс
+    :param data['from_id']: Отправитель платежа
     :param data['amount']: Количество полученных VK Coin
     """
 
@@ -21,4 +21,4 @@ def payment_received(data):
     # Вместо print вы можете выполнить ваши действия
 
 
-merchant.run_longpoll(tx=[1]) # Запускаем LongPoll
+merchant.run_longpoll(tx=[1])  # Запускаем  прослушивание

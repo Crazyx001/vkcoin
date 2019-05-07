@@ -1,33 +1,55 @@
 import requests
 import time
-from threading import Thread
 from random import randint
 import json
-import socket
-import sys
-import subprocess
-
-try:
-    from websocket import create_connection, WebSocketConnectionClosedException
-except ImportError:
-    subprocess.call('pip install websocket-client')
-    sys.exit()
+from websocket import create_connection, WebSocketConnectionClosedException
+import bottle
 
 
-class VKCoinApi:
-    def __init__(self, user_id, key):
+class VKCoin:
+    def __init__(self, user_id, key, token=None):
         self.link = 'https://coin-without-bugs.vkforms.ru/merchant/'
+        self.method_url = 'https://api.vk.com/method/'
         self.user_id = user_id
         self.key = key
-        self.reg_endpoint = False
-        self.handler = None
+        self.token = token
+        self.websocket_handler = None
+        self.websocket_url = None
+        self.websocket_instance = None
         self.longpoll_handler = None
-        self.last_trans = None
-        self.port = None
+        self.longpoll_transaction = None
+        self.callback_handler = None
+        self.callback_ip = None
+        self.callback_port = None
 
-    def send_coins(self, to_id, amount, mark_as_merchant=False):
-        data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount, 'markAsMerchant': mark_as_merchant}
-        return requests.post(self.link + 'send', json=data).json()
+    def _send_api_request(self, method, params):
+        response = requests.post(self.link + method, json=params).json()
+        if 'error' in response:
+            raise Exception(response['error']['message'])
+        return response['response']
+
+    def _create_ws_link(self):
+        if not self.websocket_url:
+            response = requests.get(self.method_url + 'apps.get', params={'access_token': self.token, 'app_id': 6915965,
+                                                                          'v': 5.52}).json()
+            try:
+                self.websocket_url = response['response']['items'][0]['mobile_iframe_url']
+            except KeyError:
+                raise Exception('Неверный токен')
+
+        user_id = int(self.websocket_url.split('user_id=')[-1].split('&')[0])
+        ch = user_id % 32
+        self.user_id = user_id
+        ws_link = self.websocket_url.replace('https', 'wss').replace('\\', '')
+        ws_link = ws_link.replace('index.html', f'channel/{ch}')
+        ws_link += f'&ver=1&upd=1&pass={user_id - 1}'
+        self.websocket_url = ws_link
+
+    def send_payment(self, to_id, amount, mark_as_merchant=False):
+        data = {'merchantId': self.user_id, 'key': self.key, 'toId': to_id, 'amount': amount}
+        if mark_as_merchant:
+            data['markAsMerchant'] = True
+        return self._send_api_request('send', params=data)
 
     def get_payment_url(self, amount, payload=None, free_amount=False):
         if not payload:
@@ -44,142 +66,82 @@ class VKCoinApi:
         data = {'merchantId': self.user_id, 'key': self.key, 'tx': tx}
         if last_tx:
             data['lastTx'] = last_tx
-        return requests.post(self.link + 'tx', json=data).json()
+        return self._send_api_request('tx', params=data)
 
-    def get_user_balance(self, *users):
+    def get_balance(self, *users):
+        if len(users) == 0:
+            users = [self.user_id]
         data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
-        return requests.post(self.link + 'score', json=data).json()
-
-    def get_my_balance(self):
-        return self.get_user_balance(self.user_id)
-
-    def set_callback_endpoint(self, address=None):
-        try:
-            self.port = int(address.split(':')[1])
-        except ValueError:
-            raise Exception('Неверный порт')
-        self.reg_endpoint = True
-        data = {'merchantId': self.user_id, 'key': self.key, 'callback': address}
-        return requests.post(self.link + 'set', json=data).json()
-
-    def remove_callback_endpoint(self):
-        data = {'merchantId': self.user_id, 'key': self.key, 'callback': None}
-        return requests.post(self.link + 'set', json=data).json()
-
-    def callback_start(self):
-        if not self.reg_endpoint:
-            raise Exception('Необходима регистрация CallBack-endpoint')
-        sock = socket.socket()
-        sock.bind(('', self.port))
-        sock.listen(1)
-        while True:
-            c_sock, _ = sock.accept()
-            msg = c_sock.recv(1024).decode('utf-8')
-            if msg:
-                c_sock.send(b'HTTP/1.1 200 OK\n\n\n')
-                try:
-                    data = json.loads(msg.split('\r\n\r\n')[-1])
-                except json.JSONDecodeError:
-                    c_sock.close()
-                else:
-                    self.handler(data)
-
-    def longpoll_start(self, tx, interval=0.2):
-        self.last_trans = self.get_transactions(tx)['response']
-        while True:
-            time.sleep(interval)
-            current_trans = self.get_transactions(tx)['response']
-            if self.last_trans[0] != current_trans[0]:
-                new_trans = current_trans[0]
-                if new_trans['to_id'] == self.user_id:
-                    self.last_trans = current_trans
-                    if self.longpoll_handler:
-                        self.longpoll_handler(new_trans)
+        return self._send_api_request('score', params=data)
 
     def set_shop_name(self, name):
         data = {'merchantId': self.user_id, 'key': self.key, 'name': name}
-        return requests.post(self.link + 'set', json=data).json()
-      
-    def cb_handler(self, func):
-        self.handler = func
-        return func
+        return self._send_api_request('set', params=data)
 
-    def lp_handler(self, func):
-        self.longpoll_handler = func
-        return func
+    def remove_callback_endpoint(self):
+        data = {'merchantId': self.user_id, 'key': self.key, 'callback': None}
+        return self._send_api_request('set', params=data)
 
+    def set_callback_endpoint(self, ip='127.0.0.1', port=80):
+        data = {'merchantId': self.user_id, 'key': self.key, 'callback': ip + str(port)}
+        return self._send_api_request('set', params=data)
 
-class VKCoinWS(Thread):
-    def __init__(self, token=None, iframe_link=None, notify=False):
-        Thread.__init__(self)
-        self.method_url = 'https://api.vk.com/method/'
-        self.token = token
-        self.iframe_link = iframe_link
-        self.notify = notify
-        self.score = 0
-        self.user_id = 0
-        self.link = None
-        self.ws_link = None
-        self.handler_f = None
-        self.ws = None
-
-    def run_ws(self):
-        self.ws_link = self._create_ws_link()
-        self.start()
-
-    def _create_ws_link(self):
-        if not self.iframe_link:
-            response = requests.get(self.method_url + 'apps.get', params={'access_token': self.token, 'app_id': 6915965,
-                                                                          'v': 5.52}).json()
-            try:
-                self.iframe_link = response['response']['items'][0]['mobile_iframe_url']
-            except KeyError:
-                raise Exception('Неверный токег')
-
-        user_id = int(self.iframe_link.split('user_id=')[-1].split('&')[0])
-        ch = user_id % 32
-        self.user_id = user_id
-        ws_link = self.iframe_link.replace('https', 'wss').replace('\\', '')
-        ws_link = ws_link.replace('index.html', f'channel/{ch}')
-        ws_link += f'&ver=1&upd=1&pass={user_id - 1}'
-        return ws_link
-
-    def run(self):
-        self.ws = create_connection(self.ws_link)
-        while True:
-            try:
-                msg = self.ws.recv()
-                self._message_handler(msg)
-            except WebSocketConnectionClosedException:
-                self.ws = create_connection(self.ws_link)
-            time.sleep(0.1)
-
-    def _message_handler(self, msg):
-        if msg.startswith('TR'):
-            print(msg)
-            amount, user_from, payload = msg.split()[1:]
-            self.score += int(amount)
-            if self.notify:
-                print(f'Пополнение на сумму {int(amount) / 1000} от vk.com/id{user_from}')
-                print(f'Текущий баланс: {self.score / 1000}')
-            if self.handler:
-                data = {'user_id': self.user_id, 'balance': self.score, 'user_from': user_from, 'amount': amount,
-                        'payload': payload}
-                self.handler_f(data)
-        elif len(msg) > 50000:
-            if self.notify:
-                msg = json.loads(msg)
-                self.score = msg['score']
-                print('Баланс', msg['score'] / 1000)
+    def callback_server(self):
+        data = bottle.request.body.read().decode()
+        if self.callback_handler:
+            self.callback_handler(json.loads(data))
+        return 'OK'
 
     def get_top(self, top_type='user'):
-        if not self.ws_link:
-            self.ws_link = self._create_ws_link()
-        ws = create_connection(self.ws_link)
+        if not self.websocket_url:
+            self.websocket_url = self._create_ws_link()
+        ws = create_connection(self.websocket_url)
         init = json.loads(ws.recv())
         ws.close()
         return init.get('top').get(f'{top_type}Top')
 
-    def handler(self, func):
-        self.handler_f = func
-        return func
+    def run_callback(self):
+        bottle.route('/', method='POST')(self.callback_server)
+        bottle.run(host=self.callback_ip, port=self.callback_port)
+
+    def payment_handler(self, handler_type=None, ip=None, port=None):
+        def decorator(handler):
+            if handler_type == 'websocket':
+                self.websocket_handler = handler
+            elif handler_type == 'longpoll':
+                self.longpoll_handler = handler
+            elif handler_type == 'callback':
+                self.callback_ip = ip
+                self.callback_port = port
+                self.callback_handler = handler
+            return handler
+        return decorator
+
+    def run_longpoll(self, tx, interval=0.2):
+        self.longpoll_transaction = self.get_transactions(tx)['response']
+        while True:
+            time.sleep(interval)
+            current_transaction = self.get_transactions(tx)['response']
+            if self.longpoll_transaction[0] != current_transaction[0]:
+                new_transaction = current_transaction[0]
+                if new_transaction['to_id'] == self.user_id:
+                    self.longpoll_transaction = current_transaction
+                    if self.longpoll_handler:
+                        self.longpoll_handler(new_transaction)
+
+    def run_websocket(self):
+        if not self.websocket_url:
+            self._create_ws_link()
+        self.websocket_instance = create_connection(self.websocket_url)
+        while True:
+            try:
+                message = self.websocket_instance.recv()
+                if message.startswith('TR'):
+                    amount, user_from, payload = message.split()[1:]
+                    payload = self.get_transactions([payload])['response'][0]['payload']
+                    data = {'from_id': user_from, 'to_id': self.user_id, 'amount': amount, 'payload': payload}
+                    if self.websocket_handler:
+                        self.websocket_handler(data)
+            except WebSocketConnectionClosedException:
+                self.websocket_instance = create_connection(self.websocket_url)
+            time.sleep(0.1)

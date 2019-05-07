@@ -1,9 +1,9 @@
 import vkcoin
 
-merchant = vkcoin.VKCoinApi(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Ваш ID и ключ
+merchant = vkcoin.VKCoin(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Ваш ID и ключ
 
 
-@merchant.cb_handler
+@merchant.payment_handler(handler_type='callback', ip='0.0.0.0', port=80)
 def payment_received(data):
     """
     При получении платежа будет запущена эта функция. Она может называться как угодно
@@ -23,5 +23,5 @@ def payment_received(data):
     # Вместо print вы можете выполнить ваши действия
 
 
-merchant.set_callback_endpoint()  # Регистрируем Endpoint
-merchant.callback_start()  # Запускаем сервер для Callback
+merchant.set_callback_endpoint('127.0.0.1', 80)  # Регистрируем Endpoint
+merchant.run_callback()  # Запускаем сервер для Callback
