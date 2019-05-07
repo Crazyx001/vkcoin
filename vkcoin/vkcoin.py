@@ -4,6 +4,7 @@ from random import randint
 import json
 from websocket import create_connection, WebSocketConnectionClosedException
 import bottle
+import socket
 
 
 class VKCoin:
@@ -19,7 +20,6 @@ class VKCoin:
         self.longpoll_handler = None
         self.longpoll_transaction = None
         self.callback_handler = None
-        self.callback_ip = None
         self.callback_port = None
 
     def _send_api_request(self, method, params):
@@ -82,8 +82,11 @@ class VKCoin:
         data = {'merchantId': self.user_id, 'key': self.key, 'callback': None}
         return self._send_api_request('set', params=data)
 
-    def set_callback_endpoint(self, ip='127.0.0.1', port=80):
-        data = {'merchantId': self.user_id, 'key': self.key, 'callback': ip + str(port)}
+    def set_callback_endpoint(self, ip=None, port=8080):
+        if ip is None:
+            ip = 'http://' + socket.gethostbyname(socket.getfqdn()) + ':' + str(port)
+        self.callback_port = port
+        data = {'merchantId': self.user_id, 'key': self.key, 'callback': ip}
         return self._send_api_request('set', params=data)
 
     def callback_server(self):
@@ -102,17 +105,15 @@ class VKCoin:
 
     def run_callback(self):
         bottle.route('/', method='POST')(self.callback_server)
-        bottle.run(host=self.callback_ip, port=self.callback_port)
+        bottle.run(host='0.0.0.0', port=self.callback_port)
 
-    def payment_handler(self, handler_type=None, ip=None, port=None):
+    def payment_handler(self, handler_type=None):
         def decorator(handler):
             if handler_type == 'websocket':
                 self.websocket_handler = handler
             elif handler_type == 'longpoll':
                 self.longpoll_handler = handler
             elif handler_type == 'callback':
-                self.callback_ip = ip
-                self.callback_port = port
                 self.callback_handler = handler
             return handler
         return decorator
