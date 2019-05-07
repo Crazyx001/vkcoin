@@ -1,7 +1,7 @@
 # vkcoin
 Билиотека для платёжного API VK Coin. Оффициальная документация: https://vk.com/@hs-marchant-api
 
-После обновления **2.0** множество функций и классов изменило свой прежний вид. [Миграция](https://github.com/crinny/vkcoin/MIGRATION.md). [Старая документация](https://github.com/crinny/vkcoin/OLDREADME.md).
+После обновления **2.0** множество функций и классов изменило свой прежний вид. [Миграция](https://github.com/crinny/vkcoin/blob/master/MIGRATION.md). [Старая документация](https://github.com/crinny/vkcoin/blob/master/OLDREADME.md).
 
 [![PyPI version](https://badge.fury.io/py/vkcoin.svg)](https://badge.fury.io/py/vkcoin)
 [![Week downloads](https://img.shields.io/pypi/dw/vkcoin.svg)](https://pypi.org/project/vkcoin)
@@ -114,7 +114,7 @@ merchant.remove_callback_endpoint()
 merchant.run_callback()
 ```
 
-[Пример использования](https://github.com/crinny/vkcoin/examples/callback.py)
+[Пример использования](https://github.com/crinny/vkcoin/blob/master/examples/callback.py)
 
 # WebSocket
 **VKCoin** для взаимодействия между клиентом и сервером использует протокол WebSocket.
@@ -138,7 +138,7 @@ data['amount']  # количество полученных коинов
 data['payload']  # Payload
 ```
 
-[Пример использования](https://github.com/crinny/vkcoin/examples/websocket.py)
+[Пример использования](https://github.com/crinny/vkcoin/blob/master/examples/websocket.py)
 
 # Longpoll
 
@@ -160,7 +160,7 @@ data['amount']  # количество полученных коинов
 data['created_at']  # Unix Timestamp, когда был совершён перевод
 ```
 
-[Пример использования](https://github.com/crinny/vkcoin/examples/longpoll.py)
+[Пример использования](https://github.com/crinny/vkcoin/blob/master/examples/longpoll.py)
 
 # Примеры
 Примеры расположены в отдельной [папке](https://github.com/crinny/vkcoin/tree/master/examples) репозитория.
