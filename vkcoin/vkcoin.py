@@ -123,12 +123,15 @@ class VKCoin:
         while True:
             time.sleep(interval)
             current_transaction = self.get_transactions(tx)
-            if self.longpoll_transaction[0] != current_transaction[0]:
-                new_transaction = current_transaction[0]
-                if new_transaction['to_id'] == self.user_id:
-                    self.longpoll_transaction = current_transaction
-                    if self.longpoll_handler:
-                        self.longpoll_handler(new_transaction)
+            try:
+                if self.longpoll_transaction[0] != current_transaction[0]:
+                    new_transaction = current_transaction[0]
+                    if new_transaction['to_id'] == self.user_id:
+                        self.longpoll_transaction = current_transaction
+                        if self.longpoll_handler:
+                            self.longpoll_handler(new_transaction)
+            except IndexError:
+                pass
 
     def run_websocket(self):
         if not self.websocket_url:
