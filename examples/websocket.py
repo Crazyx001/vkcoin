@@ -21,4 +21,4 @@ def payment_received(data):
     # Вместо print вы можете выполнить ваши действия
 
 
-merchant.run_longpoll(tx=[1])  # Запускаем  прослушивание
+merchant.run_websocket(tx=[1])  # Запускаем  прослушивание
