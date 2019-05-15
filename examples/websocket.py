@@ -1,6 +1,6 @@
 import vkcoin
 
-merchant = vkcoin.VKCoin(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')  # Ваш ID и ключ
+merchant = vkcoin.VKCoin(user_id=123456789, key='xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', token='xxxxxxxxxxxxxxxxxxx')  # Ваш ID, токен VK Coin и ВК
 
 
 @merchant.payment_handler(handler_type='websocket')
