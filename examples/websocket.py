@@ -9,7 +9,6 @@ def payment_received(data):
     При получении платежа будет запущена эта функция. Она может называться как угодно
 
     :param data['to_id']: Ваш ID ВКонтакте
-    :param data['balance']: Ваш текущий баланс
     :param data['from_id']: Отправитель платежа
     :param data['amount']: Количество полученных VK Coin
     """
@@ -21,4 +20,4 @@ def payment_received(data):
     # Вместо print вы можете выполнить ваши действия
 
 
-merchant.run_websocket()  # Запускаем  прослушивание
+merchant.run_websocket(tx=[1])  # Запускаем  прослушивание
