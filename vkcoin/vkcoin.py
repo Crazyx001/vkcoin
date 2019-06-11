@@ -69,10 +69,15 @@ class VKCoin:
         return self._send_api_request('tx', params=data)
 
     def get_balance(self, *users):
+        current_user = False
         if len(users) == 0:
             users = [self.user_id]
+            current_user = True
         data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
-        return self._send_api_request('score', params=data)
+        response = self._send_api_request('score', params=data)
+        if current_user:
+            response = response[self.user_id]
+        return response
 
     def set_shop_name(self, name):
         data = {'merchantId': self.user_id, 'key': self.key, 'name': name}
