@@ -164,9 +164,3 @@ data['created_at']  # Unix Timestamp, когда был совершён пер�
 
 # Примеры
 Примеры расположены в отдельной [папке](https://github.com/crinny/vkcoin/tree/master/examples) репозитория.
-
-# Где меня можно найти
-Я готов ответить на ваши вопросы, связанные с библиотекой.
-* [ВКонтакте Crinny](https://vk.com/crinny)  or [ВКонтакте Spooti](https://vk.com/edgar_gorobchuk)
-* [Telegram Crinny](https://t.me/truecrinny) or [Telegram Spooti](https://t.me/spooti)
-* [Чат ВКонтакте по VK Coin API](https://vk.me/join/AJQ1d5eSUQ81wnwgfHSRktCi)
