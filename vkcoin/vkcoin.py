@@ -76,7 +76,7 @@ class VKCoin:
         data = {'merchantId': self.user_id, 'key': self.key, 'userIds': users}
         response = self._send_api_request('score', params=data)
         if current_user:
-            response = response[self.user_id]
+            response = response[str(self.user_id)]
         return response
 
     def set_shop_name(self, name):
